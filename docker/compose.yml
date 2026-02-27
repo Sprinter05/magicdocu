@@ -1,0 +1,33 @@
+services:
+  ollama:
+    container_name: ollama
+    image: ollama/ollama
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - "ollama_models:/root/.ollama"
+    # post_start:
+    #   - command: ollama pull xxx
+    networks:
+      - intnet
+      
+  pgdb:
+    container_name: pgdb
+    image: magicdocu/postgres
+    restart: unless-stopped
+    volumes: 
+      - "pgsql_db:/var/lib/postgresql/data"
+    ports:
+      - "127.0.0.1:5432:5432"
+    env_file: .env
+    networks:
+      - intnet 
+
+volumes:
+  ollama_models:
+  pgsql_db:
+
+networks:
+  intnet:
+    external: false
