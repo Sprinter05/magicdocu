@@ -250,10 +250,16 @@
                             class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-start justify-end p-2 backdrop-blur-[2px]">
                             <div
                                 class="bg-background-card/90 rounded-lg p-1 shadow-md flex flex-col gap-1 border border-white/10">
-                                <button
-                                    class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                    title="Download">
-                                    <span class="material-symbols-outlined text-[18px]">download</span>
+                                <form method="get" action="{% url 'documents' %}">
+                                    <input type="hidden" name="download" value="uploads/{{ document.name }}">
+                                    <button
+                                        type="submit"
+                                        class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
+                                        title="Download">
+                                        <span class="material-symbols-outlined">download</span>
+                                    </button>
+                                </form>
+
                                 </button>
                                 <button
                                     class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
@@ -263,7 +269,7 @@
                                 <button
                                     class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
                                     title="More">
-                                    <span class="material-symbols-outlined text-[18px]">more_vert</span>
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
                                 </button>
                             </div>
                         </div>
