@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{% load static %}
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{% block title %}MagicDocu{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#895af6',
+                        background: {
+                            light: '#f6f5f8',
+                            dark: '#151022',
+                        },
+                    },
+                    fontFamily: {
+                        display: ['Inter', 'Inter Variable', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        lg: '1rem',
+                        xl: '1.5rem',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            background-color: #151022;
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(137, 90, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(137, 90, 246, 0.05) 0%, transparent 40%);
+            min-height: 100vh;
+        }
+
+        .stardust {
+            background-image: radial-gradient(white, transparent);
+            background-size: 2px 2px;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+    {% block content %}{% endblock %}
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

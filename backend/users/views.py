@@ -10,9 +10,7 @@ def sign_up(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.username = user.username.lower()
-            user.save()
+            user = form.save()
             return redirect("login")
         else:
-            return render(request, "login.html", {"form": form})
+            return render(request, "signup.html", {"form": form})
