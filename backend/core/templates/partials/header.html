@@ -7,21 +7,17 @@
             </div>
             <h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">MagicDocu</h2>
         </div>
-        <label class="flex flex-col flex-1 max-w-2xl relative group">
-            <div
-                class="flex w-full items-stretch rounded-xl h-12 bg-white/5 border border-white/10 group-focus-within:border-primary/50 group-focus-within:bg-white/10 group-focus-within:shadow-[0_0_20px_rgba(139,92,246,0.2)] transition-all duration-300">
-                <div class="text-text-secondary flex items-center justify-center pl-4 rounded-l-xl">
-                    <span class="material-symbols-outlined">search</span>
-                </div>
-                <input
-                    class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl bg-transparent text-text-primary focus:outline-0 focus:ring-0 border-none h-full placeholder:text-text-secondary/70 px-4 text-base font-normal leading-normal"
-                    placeholder="Search documents, tags, or OCR content..." value="" />
-                <div
-                    class="text-text-secondary flex items-center justify-center pr-4 rounded-r-xl cursor-pointer hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined">tune</span>
-                </div>
-            </div>
-        </label>
+        <form method="get" action="{% url 'documents' %}" class="flex w-full max-w-2xl rounded-xl bg-white/5 border border-white/10 group-focus-within:border-primary/50 group-focus-within:bg-white/10 group-focus-within:shadow-[0_0_20px_rgba(139,92,246,0.2)] transition-all duration-300 h-12">
+    <div class="flex items-center justify-center pl-4 text-text-secondary rounded-l-xl">
+        <span class="material-symbols-outlined">search</span>
+    </div>
+    <input type="text" name="q"
+        class="flex-1 bg-transparent text-text-primary placeholder:text-text-secondary/70 focus:outline-none focus:ring-0 border-none h-full px-4 text-base"
+        placeholder="Search documents, tags, or OCR content..." value="{{ query|default:'' }}" />
+    <button type="submit" class="flex items-center justify-center pr-4 text-text-secondary rounded-r-xl hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">search</span>
+    </button>
+</form>
         <div class="flex items-center justify-end gap-6 flex-1">
             <nav class="hidden xl:flex items-center gap-8">
                 <a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal"
