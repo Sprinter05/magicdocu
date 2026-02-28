@@ -43,14 +43,20 @@
                     <span
                         class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Date
                         Modified</span>
-                    <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
-                </div>
                 <div class="flex flex-col gap-2">
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <div class="relative flex items-center">
-                            <input
-                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
+                            
+                            <form id="download-form" method="get" action="{% url 'documents' %}">
+                                <input 
+                                    type="checkbox" 
+                                    name="date_filter" 
+                                    value="today"
+                                    onchange="this.form.submit()"
+                                    {% if request.GET.down == 'load' %}checked{% endif %}
+                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                />
+                            </form>
                             <span
                                 class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                         </div>
@@ -59,9 +65,16 @@
                     </label>
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <div class="relative flex items-center">
-                            <input checked=""
-                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
+                            <form id="download-form" method="get" action="{% url 'documents' %}">
+                                <input 
+                                    type="checkbox" 
+                                    name="date_filter" 
+                                    value="7" 
+                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                    onchange="this.form.submit()"
+                                    {% if request.GET.down == 'load' %}checked{% endif %}
+                                />
+                            </form>
                             <span
                                 class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                         </div>
@@ -69,13 +82,17 @@
                             7 Days</span>
                     </label>
                     <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative flex items-center">
-                            <input
+                        
+                        <form id="download-form" method="get" action="{% url 'documents' %}">
+                            <input 
+                                type="checkbox" 
+                                name="date_filter" 
+                                value="30" 
                                 class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
-                            <span
-                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                        </div>
+                                onchange="this.form.submit()"
+                                {% if request.GET.down == 'load' %}checked{% endif %}
+                            />
+                        </form>
                         <span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
                             30 Days</span>
                     </label>
@@ -86,7 +103,6 @@
                     <span
                         class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">File
                         Type</span>
-                    <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button
@@ -103,7 +119,6 @@
                 <div class="flex items-center justify-between group cursor-pointer">
                     <span
                         class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Tags</span>
-                    <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
                 </div>
                 <div class="flex flex-col gap-2">
                     <label class="flex items-center gap-3 cursor-pointer group">
@@ -224,7 +239,7 @@
             </div>
             <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
                 {% for document in documents %}
-                <a href="{% url 'chat' document.id %}"
+                <a href="{% url 'document_detail' document.id %}"
                     class="group flex flex-col bg-background-card rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer h-full">
                     <div class="relative w-full aspect-[4/5] bg-[#12101a] overflow-hidden">
                         <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
@@ -235,21 +250,31 @@
                             class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-start justify-end p-2 backdrop-blur-[2px]">
                             <div
                                 class="bg-background-card/90 rounded-lg p-1 shadow-md flex flex-col gap-1 border border-white/10">
-                                <button
-                                    class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                    title="Download">
-                                    <span class="material-symbols-outlined text-[18px]">download</span>
+                                <form method="get" action="{% url 'documents' %}">
+                                    <input type="hidden" name="download" value="uploads/{{ document.name }}">
+                                    <button
+                                        type="submit"
+                                        class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
+                                        title="Download">
+                                        <span class="material-symbols-outlined">download</span>
+                                    </button>
+                                </form>
+
                                 </button>
                                 <button
                                     class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
                                     title="Share">
                                     <span class="material-symbols-outlined text-[18px]">share</span>
                                 </button>
-                                <button
-                                    class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                    title="More">
-                                    <span class="material-symbols-outlined text-[18px]">more_vert</span>
-                                </button>
+                                <form method="get" action="{% url 'documents' %}">
+                                    <input type="hidden" name="delete" value="uploads/{{ document.name }}">
+                                    <button
+                                        class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
+                                        title="Delete">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </form>
+                               
                             </div>
                         </div>
                         <div

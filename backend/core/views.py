@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from core.forms import UploadFileForm
-from django.utils import timezone
+from datetime import timedelta
 from pgvector.django import CosineDistance
 
 
@@ -213,16 +213,6 @@ def chat_api(request):
         "message": assistant_content,
     })
 
-def search_view(request):
-    query = request.GET.get("q", "").strip()
-
-    if not query:
-        return render(request, "search.html", {"query": query, "results": []})
-
-    result = search_by_text(query)
-
-    return JsonResponse({"result": [(doc.id) for doc in result]}, status=202)
-
 @login_required
 def document_view(request):
     document_tags = []
@@ -231,9 +221,13 @@ def document_view(request):
     all_tags = []
     all_documents = Document.objects.all()
 
-    tag_filter = request.GET.get("download")
-    if tag_filter:
-        return FileResponse(all_documents.filter(file=tag_filter).first().file.open("rb"), as_attachment=True)
+    downfile = request.GET.get("download")
+    if downfile:
+        return FileResponse(all_documents.filter(file=downfile).first().file.open("rb"), as_attachment=True)
+
+    delfile = request.GET.get("delete")
+    if delfile:
+        all_documents.filter(file=delfile).first().delete()
     
     filtered_documents = all_documents
     tag_filter = request.GET.get("tags")
@@ -255,8 +249,15 @@ def document_view(request):
     if date_filter == "today":
         filtered_documents = filtered_documents.filter(created_date__gte=timezone.now())
     elif date_filter == "30":
-        filtered_documents = filtered_documents.filter(created_date__gte=datetime.timedelta(days=30))
-    
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now() - timedelta(days=30))
+    elif date_filter == "7":
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now() - timedelta(days=7))
+
+    query = request.GET.get("q", "").strip()
+    if query:
+        result = search_by_text(query)
+        filtered_documents = filtered_documents.filter(id__in=[(doc.id) for doc in result])
+
     for document in filtered_documents:
         file_name = document.file.name.split("/")[-1]
         extension = file_name.split(".")[-1]
@@ -288,3 +289,27 @@ def document_view(request):
         "all_tags": document_tags
     }
     return render(request, "documents.html", context)
+
+
+def document_detail(request, id):
+    document = get_object_or_404(Document, pk=id)
+    file_name = document.file.name.split("/")[-1]
+    extension = file_name.split(".")[-1]
+    document_tags = document.tags.all()
+
+    doc_data = {
+        "id": document.pk,
+        "name": file_name,
+        "file": document.file,
+        "summary": document.summary,
+        "author": document.author,
+        "filetype": extension,
+        "modified_date": document.modified_date,
+        "created_date": document.created_date,
+        "accessed_date": document.accessed_date,
+        "size": round(document.size / 1048576, 2),
+        "tags": document_tags,
+        "shared_users": document.shared_users,
+    }
+    return render(request, "document_detail.html", {"document": doc_data})
+
