@@ -1,7 +1,10 @@
 from django import forms
 from django.forms.models import ModelForm
 
+from core.models import Document
+
 
 class UploadFileForm(ModelForm):
-    title = forms.CharField(max_length=50)
-    file = forms.FileField()
+    class Meta:
+        model = Document
+        fields = ["file", "author", "filetype", "modified_date", "created_date", "accessed_date", "size", "tags", "shared_users"]
