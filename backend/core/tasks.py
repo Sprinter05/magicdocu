@@ -52,8 +52,30 @@ def _embed_texts(texts: list[str]) -> list[list[float]]:
 # ---------------------------------------------------------------------------
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def get_document_summary(self, document_id: int):
+    from core.models import Document
+
+    try:
+        document = Document.objects.get(pk=document_id)
+    except Document.DoesNotExist:
+        logger.error("Document %s does not exist", document_id)
+        return
+
+    text = convert_to_md(document.file.name)
+    base = f"Only output in your following prompt a summary of the following text, up to a max of 30 words: "
+    response = ollama.chat(
+        model="llama3.2",
+        messages=[{"role": "user", "content": f"{base} {text}"}],
+    )
+
+    summary = (json.loads(response.model_dump_json())["message"]["content"])
+    document.summary = summary
+    document.save()
+
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
 def process_document_keywords(self, document_id: int):
-    from core.models import Document, DocumentKeyword  # local import to avoid circular
+    from core.models import Document, Keyword  # local import to avoid circular
 
     try:
         document = Document.objects.get(pk=document_id)
@@ -73,12 +95,12 @@ def process_document_keywords(self, document_id: int):
     embeddings = _embed_texts(words)
 
     for idx, (text, embedding) in enumerate(zip(words, embeddings)):
-        doc = DocumentKeyword(
-            document = document,
+        key = Keyword(
             keyword = text,
             embedding = embedding
         )
-        doc.save()
+        key.save()
+        document.keywords.add(key)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)

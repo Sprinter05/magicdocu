@@ -16,7 +16,7 @@ from pgvector.django import CosineDistance
 
 from core.forms import UploadFileForm, SelectFileForm
 from core.models import ChatMessage, ChatSession, Document, DocumentChunk
-from core.tasks import process_document_embeddings, search_by_embeddings, process_document_keywords
+from core.tasks import *
 from core.workers import *
 
 logger = logging.getLogger(__name__)
@@ -63,6 +63,7 @@ def upload_file(request):
             doc = form.save()
             # Trigger async embedding generation for PDFs
             if doc.filetype and "pdf" in doc.filetype.lower():
+                get_document_summary.delay(doc.id)
                 process_document_embeddings.delay(doc.id)
                 process_document_keywords.delay(doc.id)
             return HttpResponseRedirect("/")
