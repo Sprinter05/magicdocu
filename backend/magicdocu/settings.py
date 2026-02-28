@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'users',
     'core',
     'django_elasticsearch_dsl'
@@ -127,7 +128,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-AUTH_USER_MODEL = "users.AuthUser"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "index"
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
@@ -140,3 +140,9 @@ ELASTICSEARCH_DSL = {
         'ca_certs': None
     },
 }
+
+# Ollama settings
+OLLAMA_BASE_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+OLLAMA_EMBED_MODEL = "mxbai-embed-large"
+OLLAMA_CHAT_MODEL = "llama3.2"
+
