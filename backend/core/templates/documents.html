@@ -1,0 +1,14 @@
+<div class="main">
+    {% for document in documents %}
+        <h3>{{ document.file }}</h3>
+        <h3>{{ document.author }}</h3>
+        <h3>{{ document.filetype }}</h3>
+        <h3>{{ document.modified_date }}</h3>
+        <h3>{{ document.created_date }}</h3>
+        <h3>{{ document.size }}</h3>
+        <h3>{{ document.tags }}</h3>
+        <h3>{{ document.shared_users }}</h3>
+        <h3>{{ document.embedded }}</h3>
+        <hr/>
+    {% endfor %}
+</div>
