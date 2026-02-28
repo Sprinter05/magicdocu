@@ -7,7 +7,6 @@ import ollama
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from .elastic import ElasticDoc
 from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -67,18 +66,6 @@ def upload_file(request):
     else:
         form = UploadFileForm()
     return render(request, "upload.html", {"form": form, "file_meta": file_meta})
-
-def search(request):
-    query = request.GET.get('q')
-    if query:
-        docs = ElasticDoc.search().query("match", description=query)
-    
-    else:
-        docs = ElasticDoc.search()
-
-    docs.to_queryset()
-    breakpoint()
-    return render(request, 'search_result.html', {'docs': docs})
 
 # ---------------------------------------------------------------------------
 # Chat views

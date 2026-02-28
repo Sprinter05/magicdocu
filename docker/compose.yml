@@ -13,20 +13,6 @@ services:
     networks:
       - intnet
       
-  elastic:
-    container_name: elastic
-    image: docker.elastic.co/elasticsearch/elasticsearch:9.3.1
-    restart: unless-stopped
-    env_file: ../.env
-    networks:
-      - intnet
-    ports:
-      - "127.0.0.1:9200:9200"
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-      
   pgdb:
     container_name: pgdb
     image: magicdocu/postgres

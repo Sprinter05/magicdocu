@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'users',
     'core',
-    'django_elasticsearch_dsl'
 ]
 
 AUTH_USER_MODEL = 'users.AuthUser'
@@ -131,15 +130,6 @@ STATIC_URL = 'static/'
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "index"
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
-
-ELASTICSEARCH_DSL = {  
-    'default': {    
-        'hosts': os.environ.get("ELASTIC_URL"),
-        'http_auth': ("elastic", os.environ.get("ELASTIC_PASSWORD")),
-        'verify_certs': False,
-        'ca_certs': None
-    },
-}
 
 # Ollama settings
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
