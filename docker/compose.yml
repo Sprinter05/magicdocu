@@ -17,16 +17,25 @@ services:
     image: magicdocu/postgres
     restart: unless-stopped
     volumes: 
-      - "pgsql_db:/var/lib/postgresql/data"
+      - "pgsql_db:/var/lib/postgresql/"
     ports:
       - "127.0.0.1:5432:5432"
-    env_file: .env
+    env_file: ../.env
     networks:
       - intnet 
+      
+  redis:
+    container_name: redis
+    image: redis:8.6.1-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
 
 volumes:
   ollama_models:
   pgsql_db:
+  redis-data:
 
 networks:
   intnet:
