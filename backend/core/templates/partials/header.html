@@ -19,27 +19,23 @@
     <button type="submit" class="flex items-center justify-center pr-4 text-text-secondary rounded-r-xl hover:text-primary transition-colors">
     </button>
 </form>
-        <div class="flex items-center justify-end gap-6 flex-1">
-            <nav class="hidden xl:flex items-center gap-8">
-                <a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal"
-                    href="#">Dashboard</a>
-                <a class="text-primary text-sm font-medium leading-normal relative after:content-[''] after:absolute after:-bottom-6 after:left-0 after:w-full after:h-0.5 after:bg-primary after:shadow-[0_0_8px_#8b5cf6]"
-                    href="#">Library</a>
-                <a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal"
-                    href="#">Upload</a>
-            </nav>
-            <div class="flex items-center gap-4">
-                <button
-                    class="size-10 flex items-center justify-center rounded-full hover:bg-white/10 text-text-secondary transition-colors relative">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span
-                        class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-background-sidebar"></span>
-                </button>
-                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-border-dark shadow-sm cursor-pointer hover:border-primary/50 transition-colors"
-                    data-alt="User profile picture"
-                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCrs8hyA7AzWog14-YXEm3lmgANDQezcL2Dd3m0cvZ7DlTfYelNFFznjxBCqhklXQPP7qeW1nmdW6ulRrre3EhHrHd9NuVd5LkFzjZcHeiWIvriNj-rPeFCDYQs4Gbnbp0HeaOUvs33OVNSAr7ING1TyBk-OHtTUmKLltYfOqCuOAKICHh5nYkNEndJVY-9OUbsoa5TwH9MFkhhgS-IBi0Ue2Ub6JMgI_qZoHUiPZ5zbtGQVw7OBFJ9qyoLEafxopFvdBSJdvUXDd8");'>
-                </div>
+    <div class="ml-auto flex items-center">
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="mr-5 px-3 text-white text-sm rounded transition-colors text-text-secondary">
+                Logout
+            </button>
+        </form>
+        <div class="ml-auto flex flex-col items-center">
+            <div
+                class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-border-dark shadow-sm cursor-pointer hover:border-primary/50 transition-colors"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCrs8hyA7AzWog14-YXEm3lmgANDQezcL2Dd3m0cvZ7DlTfYelNFFznjxBCqhklXQPP7qeW1nmdW6ulRrre3EhHrHd9NuVd5LkFzjZcHeiWIvriNj-rPeFCDYQs4Gbnbp0HeaOUvs33OVNSAr7ING1TyBk-OHtTUmKLltYfOqCuOAKICHh5nYkNEndJVY-9OUbsoa5TwH9MFkhhgS-IBi0Ue2Ub6JMgI_qZoHUiPZ5zbtGQVw7OBFJ9qyoLEafxopFvdBSJdvUXDd8");'>
             </div>
+            <span class="text-sm mt-1 text-text-secondary">
+                {{ request.user.username }}
+            </span>
         </div>
     </div>
 </header>
