@@ -129,6 +129,7 @@ STATIC_URL = 'static/'
 
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "index"
+LOGIN_URL = "login"
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 
 # Ollama settings
