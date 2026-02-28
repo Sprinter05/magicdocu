@@ -9,11 +9,13 @@ click-repl==0.3.0
 Django==6.0.2
 kombu==5.6.2
 numpy==2.4.2
+ollama==0.5.1
 packaging==26.0
 pgvector==0.4.2
 prompt_toolkit==3.0.52
 psycopg==3.3.3
 psycopg-binary==3.3.3
+PyMuPDF==1.25.5
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
 six==1.17.0
