@@ -130,3 +130,9 @@ AUTH_USER_MODEL = "users.AuthUser"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "index"
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+
+ELASTICSEARCH_DSL = {  
+    'default': {    
+        'hosts': os.environ.get("ELASTIC_URL")
+    },
+}

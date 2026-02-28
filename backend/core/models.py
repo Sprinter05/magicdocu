@@ -10,6 +10,7 @@ class Document(models.Model):
     file = models.FileField(upload_to="uploads/", null=True)
     author = models.ForeignKey("users.AuthUser", on_delete=models.CASCADE)
     filetype = models.CharField(null=False)
+    summary = models.TextField(null=True)
     modified_date = models.DateTimeField(null=False)
     created_date = models.DateTimeField(null=False)
     accessed_date = models.DateTimeField(null=False)
