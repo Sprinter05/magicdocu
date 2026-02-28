@@ -1,0 +1,38 @@
+---
+import "../styles/global.css";
+
+const { title = "MagicDocu | Magical OCR Dashboard" } = Astro.props;
+---
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #151022;
+        background-image: radial-gradient(circle at 50% 0%, rgba(137, 90, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 0% 100%, rgba(137, 90, 246, 0.05) 0%, transparent 40%);
+        min-height: 100vh;
+      }
+
+      .stardust {
+        background-image: radial-gradient(white, transparent);
+        background-size: 2px 2px;
+      }
+    </style>
+  </head>
+  <body class="font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+    <slot />
+  </body>
+</html>
