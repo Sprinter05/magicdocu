@@ -48,9 +48,17 @@
                 <div class="flex flex-col gap-2">
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <div class="relative flex items-center">
-                            <input
-                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
+                            
+                            <form id="download-form" method="get" action="{% url 'documents' %}">
+                                <input 
+                                    type="checkbox" 
+                                    name="date_filter" 
+                                    value="today"
+                                    onchange="this.form.submit()"
+                                    {% if request.GET.down == 'load' %}checked{% endif %}
+                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                />
+                            </form>
                             <span
                                 class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                         </div>
@@ -59,9 +67,16 @@
                     </label>
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <div class="relative flex items-center">
-                            <input checked=""
-                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
+                            <form id="download-form" method="get" action="{% url 'documents' %}">
+                                <input 
+                                    type="checkbox" 
+                                    name="date_filter" 
+                                    value="7" 
+                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                    onchange="this.form.submit()"
+                                    {% if request.GET.down == 'load' %}checked{% endif %}
+                                />
+                            </form>
                             <span
                                 class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                         </div>
@@ -69,13 +84,17 @@
                             7 Days</span>
                     </label>
                     <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative flex items-center">
-                            <input
+                        
+                        <form id="download-form" method="get" action="{% url 'documents' %}">
+                            <input 
+                                type="checkbox" 
+                                name="date_filter" 
+                                value="30" 
                                 class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
-                            <span
-                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                        </div>
+                                onchange="this.form.submit()"
+                                {% if request.GET.down == 'load' %}checked{% endif %}
+                            />
+                        </form>
                         <span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
                             30 Days</span>
                     </label>
