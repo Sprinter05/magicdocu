@@ -9,7 +9,7 @@ class Tag(models.Model):
 class Keyword(models.Model):
     keyword = models.TextField(null=False)
     embedding = VectorField(
-        dimensions=1024,
+        dimensions=768,
         null=True,
         blank=True,
     )
@@ -43,7 +43,7 @@ class DocumentChunk(models.Model):
     )
     chunk_index = models.IntegerField()
     text = models.TextField()
-    embedding = VectorField(dimensions=1024, null=True, blank=True)
+    embedding = VectorField(dimensions=768, null=True, blank=True)
 
     class Meta:
         ordering = ["document", "chunk_index"]

@@ -8,11 +8,11 @@ services:
     volumes:
       - "ollama_models:/root/.ollama"
     post_start:
-      - command: ollama pull mxbai-embed-large
-      - command: ollama pull llama3.2
+      - command: ollama pull nomic-embed-text:v1.5
+      - command: ollama pull llama3.2:1b
     networks:
       - intnet
-      
+
   pgdb:
     container_name: pgdb
     image: magicdocu/postgres

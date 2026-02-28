@@ -133,6 +133,6 @@ CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 
 # Ollama settings
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
-OLLAMA_EMBED_MODEL = "mxbai-embed-large"
-OLLAMA_CHAT_MODEL = "llama3.2"
+OLLAMA_EMBED_MODEL = "nomic-embed-text:v1.5"
+OLLAMA_CHAT_MODEL = "phi4-mini"
 
