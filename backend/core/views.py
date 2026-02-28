@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models import Q
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, FileResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -213,6 +213,10 @@ def document_view(request):
     all_extensions = []
     all_tags = []
     all_documents = Document.objects.all()
+
+    tag_filter = request.GET.get("download")
+    if tag_filter:
+        return FileResponse(all_documents.filter(file=tag_filter).first().file.open("rb"), as_attachment=True)
     
     filtered_documents = all_documents
     tag_filter = request.GET.get("tags")
