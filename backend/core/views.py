@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from core.forms import UploadFileForm
-from django.utils import timezone
+from datetime import timedelta
 from pgvector.django import CosineDistance
 
 
@@ -234,7 +234,9 @@ def document_view(request):
     if date_filter == "today":
         filtered_documents = filtered_documents.filter(created_date__gte=timezone.now())
     elif date_filter == "30":
-        filtered_documents = filtered_documents.filter(created_date__gte=datetime.timedelta(days=30))
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now() - timedelta(days=30))
+    elif date_filter == "7":
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now() - timedelta(days=7))
 
     query = request.GET.get("q", "").strip()
     if query:
