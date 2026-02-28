@@ -131,7 +131,7 @@ def search_by_text(self, text: str):
         )
         objs |= obj
 
-    docs = Document.objects.all().filter(id__in=objs.values_list("document_id"))
+    docs = Document.objects.all().filter(keywords__in=objs).distinct()
     return docs
 
 
