@@ -59,10 +59,21 @@ def upload_file(request):
                 get_document_summary.delay(doc.id)
                 process_document_embeddings.delay(doc.id)
                 process_document_keywords.delay(doc.id)
-            return HttpResponseRedirect("/")
+            # If the client expects JSON (fetch/AJAX), return the new document id so frontend can poll /upload/status/<id>
+            return JsonResponse({'id': doc.id}, status=201)
     else:
         form = UploadFileForm()
     return render(request, "upload.html", {"form": form, "file_meta": file_meta})
+
+
+def upload_status(request, document_id):
+    document = get_object_or_404(Document, pk=document_id, author=request.user)
+    status = {
+        "embedded": document.embedded,
+        "summarised": document.summarised,
+    }
+    return JsonResponse(status)
+
 
 # ---------------------------------------------------------------------------
 # Chat views

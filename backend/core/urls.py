@@ -4,6 +4,7 @@ from core import views
 
 urlpatterns = [
     path('upload/', views.upload_file, name='upload'),
+    path('upload/status/<int:document_id>/', views.upload_status, name='upload_status'),
     path('chat/<int:document_id>/', views.chat_view, name='chat'),
     path('api/chat/', views.chat_api, name='chat_api'),
     path('search/', views.search_view, name='search'),
