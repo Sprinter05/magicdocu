@@ -31,7 +31,13 @@ def dashboard(request):
     documents = Document.objects.filter(
         Q(author=request.user) | Q(shared_users=request.user)
     ).distinct()
-    return render(request, "dashboard.html", {"documents": documents})
+
+    recent_documents = documents.filter(created_date__gte=timezone.localdate())
+    return render(request, "dashboard.html", {
+        "documents": documents,
+        "document_count": len(documents),
+        "recent_document_count": len(recent_documents)
+        })
 
 
 def upload_file(request):
@@ -247,7 +253,7 @@ def document_view(request):
     date_filter = request.GET.get("date_filter")
     
     if date_filter == "today":
-        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now())
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.localdate())
     elif date_filter == "30":
         filtered_documents = filtered_documents.filter(created_date__gte=timezone.now() - timedelta(days=30))
     elif date_filter == "7":

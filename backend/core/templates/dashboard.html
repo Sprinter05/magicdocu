@@ -78,18 +78,14 @@
 
     <main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark/30">
         <div class="p-8 space-y-8 max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div
                     class="bg-background-light dark:bg-primary/5 border border-primary/10 p-6 rounded-2xl relative overflow-hidden group hover:border-primary/40 transition-all">
                     <div class="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors">
                         <span class="material-symbols-outlined !text-8xl">description</span>
                     </div>
                     <p class="text-slate-500 dark:text-slate-400 font-medium">Total Documents</p>
-                    <h3 class="text-3xl font-bold mt-1">1,284</h3>
-                    <p class="text-xs text-emerald-500 font-semibold mt-2 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">trending_up</span>
-                        +12% this month
-                    </p>
+                    <h3 class="text-3xl font-bold mt-5">{{document_count}}</h3>
                 </div>
 
                 <div
@@ -98,24 +94,7 @@
                         <span class="material-symbols-outlined !text-8xl">upload_file</span>
                     </div>
                     <p class="text-slate-500 dark:text-slate-400 font-medium">Recent Uploads</p>
-                    <h3 class="text-3xl font-bold mt-1">24</h3>
-                    <p class="text-xs text-emerald-500 font-semibold mt-2 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">trending_up</span>
-                        +5% vs yesterday
-                    </p>
-                </div>
-
-                <div
-                    class="bg-background-light dark:bg-primary/5 border border-primary/10 p-6 rounded-2xl relative overflow-hidden group hover:border-primary/40 transition-all">
-                    <div class="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors">
-                        <span class="material-symbols-outlined !text-8xl">psychology</span>
-                    </div>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium">OCR Processed</p>
-                    <h3 class="text-3xl font-bold mt-1">98.2%</h3>
-                    <p class="text-xs text-primary font-semibold mt-2 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">verified</span>
-                        High accuracy rate
-                    </p>
+                    <h3 class="text-3xl font-bold mt-5">{{recent_document_count}}</h3>
                 </div>
             </div>
 
