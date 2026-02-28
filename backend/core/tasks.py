@@ -4,6 +4,9 @@ import fitz  # PyMuPDF
 import ollama
 from celery import shared_task
 from django.conf import settings
+from pgvector.django import CosineDistance
+from .workers import convert_to_md
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +50,84 @@ def _embed_texts(texts: list[str]) -> list[list[float]]:
 # ---------------------------------------------------------------------------
 # Celery task
 # ---------------------------------------------------------------------------
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def get_document_summary(self, document_id: int):
+    from core.models import Document
+
+    try:
+        document = Document.objects.get(pk=document_id)
+    except Document.DoesNotExist:
+        logger.error("Document %s does not exist", document_id)
+        return
+
+    text = convert_to_md(document.file.name)
+    base = f"Only output in your following prompt a summary of the following text, up to a max of 30 words: "
+    response = ollama.chat(
+        model="llama3.2",
+        messages=[{"role": "user", "content": f"{base} {text}"}],
+    )
+
+    summary = (json.loads(response.model_dump_json())["message"]["content"])
+    document.summary = summary
+    document.save()
+
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def process_document_keywords(self, document_id: int):
+    from core.models import Document, Keyword  # local import to avoid circular
+
+    try:
+        document = Document.objects.get(pk=document_id)
+    except Document.DoesNotExist:
+        logger.error("Document %s does not exist", document_id)
+        return
+
+    text = convert_to_md(document.file.name)
+
+    base = f"Only output in your following prompt a comma separated list of keywords for the following text, up to a max of 10 keywords: "
+    keywords = ollama.chat(
+        model="llama3.2",
+        messages=[{"role": "user", "content": f"{base} {text}"}],
+    )
+
+    words = (json.loads(keywords.model_dump_json())["message"]["content"]).split(", ")
+    embeddings = _embed_texts(words)
+
+    for idx, (text, embedding) in enumerate(zip(words, embeddings)):
+        key = Keyword(
+            keyword = text,
+            embedding = embedding
+        )
+        key.save()
+        document.keywords.add(key)
+
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def search_by_embeddings(self, text: str):
+    from core.models import Document, DocumentChunk  # local import to avoid circular
+    texts = text.split(",")
+    
+    try:
+        embeddings = _embed_texts(texts)
+    except Exception as exc:
+        logger.exception("Embedding generation failed for search %s", text)
+        raise self.retry(exc=exc)
+    
+    objs = DocumentChunk.objects.none()
+    for idx, (chunk_text, embedding) in enumerate(zip(texts, embeddings)):
+        obj = (
+            DocumentChunk.objects.annotate(
+                distance=CosineDistance("embedding", embedding)
+            )
+            .filter(distance__lte=0.5)
+            .order_by("distance")
+        )
+        objs |= obj
+
+    docs = Document.objects.all().filter(id__in=objs.values_list("document_id"))
+    return docs
+
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
 def process_document_embeddings(self, document_id: int):

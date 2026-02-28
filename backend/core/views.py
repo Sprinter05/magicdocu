@@ -6,6 +6,7 @@ import os
 import ollama
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -13,9 +14,10 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from pgvector.django import CosineDistance
 
-from core.forms import UploadFileForm
+from core.forms import UploadFileForm, SelectFileForm
 from core.models import ChatMessage, ChatSession, Document, DocumentChunk
-from core.tasks import process_document_embeddings
+from core.tasks import *
+from core.workers import *
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +28,7 @@ def index(request):
 
 @login_required
 def dashboard(request):
+    docs = search_by_embeddings.delay("prescripciones")
     documents = Document.objects.filter(
         Q(author=request.user) | Q(shared_users=request.user)
     ).distinct()
@@ -60,12 +63,13 @@ def upload_file(request):
             doc = form.save()
             # Trigger async embedding generation for PDFs
             if doc.filetype and "pdf" in doc.filetype.lower():
+                get_document_summary.delay(doc.id)
                 process_document_embeddings.delay(doc.id)
+                process_document_keywords.delay(doc.id)
             return HttpResponseRedirect("/")
     else:
         form = UploadFileForm()
     return render(request, "upload.html", {"form": form, "file_meta": file_meta})
-
 
 # ---------------------------------------------------------------------------
 # Chat views

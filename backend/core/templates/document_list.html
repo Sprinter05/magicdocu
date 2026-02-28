@@ -1,0 +1,7 @@
+<form method="post">
+    {% csrf_token %}
+    {% for doc in documents %}
+        <input type="radio" name="document_id" value="{{ doc.id }}"> {{ doc.file.name }}<br>
+    {% endfor %}
+    <button type="submit">Select</button>
+</form>

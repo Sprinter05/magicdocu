@@ -8,7 +8,8 @@ services:
     volumes:
       - "ollama_models:/root/.ollama"
     post_start:
-      - command: ollama pull mxbai-embed-large && ollama pull llama3.2
+      - command: ollama pull mxbai-embed-large
+      - command: ollama pull llama3.2
     networks:
       - intnet
       
@@ -27,10 +28,13 @@ services:
   redis:
     container_name: redis
     image: redis:8.6.1-alpine
+    restart: unless-stopped
     ports:
       - "127.0.0.1:6379:6379"
     volumes:
       - redis-data:/data
+    networks:
+      - intnet
 
 volumes:
   ollama_models:
