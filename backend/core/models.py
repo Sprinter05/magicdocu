@@ -14,8 +14,8 @@ class Document(models.Model):
     created_date = models.DateTimeField(null=False)
     accessed_date = models.DateTimeField(null=False)
     size = models.IntegerField(null=False)
-    tags = models.ManyToManyField("core.Tag")
-    shared_users = models.ManyToManyField("users.AuthUser")
+    tags = models.ManyToManyField("core.Tag", related_name="documents")
+    shared_users = models.ManyToManyField("users.AuthUser", related_name="documents")
     
 class DocumentHistory(models.Model):
     document = models.ForeignKey("core.Document", on_delete=models.CASCADE)
@@ -23,7 +23,6 @@ class DocumentHistory(models.Model):
     modification_date = models.DateTimeField(null=False)
 
 class DocumentKeywords(models.Model):
-    pk = models.CompositePrimaryKey("keyword", "document_id")
     document = models.ForeignKey("core.Document", on_delete=models.CASCADE)
     keyword = models.TextField(null=False)
     embedding = VectorField(
