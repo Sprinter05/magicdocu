@@ -14,9 +14,10 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from pgvector.django import CosineDistance
 
-from core.forms import UploadFileForm
+from core.forms import UploadFileForm, SelectFileForm
 from core.models import ChatMessage, ChatSession, Document, DocumentChunk
 from core.tasks import process_document_embeddings, search_by_embeddings
+from core.workers import *
 
 logger = logging.getLogger(__name__)
 
@@ -200,3 +201,11 @@ def chat_api(request):
         "message": assistant_content,
     })
 
+def document_list(request):
+    if request.method == "POST":
+        document_id = request.POST.get("document_id")
+        document = Document.objects.get(id=document_id)
+        print(convert_to_md(document.file.name))
+
+    documents = Document.objects.filter(author=request.user)
+    return render(request, "document_list.html", {"documents": documents})
