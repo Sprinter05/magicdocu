@@ -277,3 +277,27 @@ def document_view(request):
         "all_tags": document_tags
     }
     return render(request, "documents.html", context)
+
+
+def document_detail(request, id):
+    document = get_object_or_404(Document, pk=id)
+    file_name = document.file.name.split("/")[-1]
+    extension = file_name.split(".")[-1]
+    document_tags = document.tags.all()
+
+    doc_data = {
+        "id": document.pk,
+        "name": file_name,
+        "file": document.file,
+        "summary": document.summary,
+        "author": document.author,
+        "filetype": extension,
+        "modified_date": document.modified_date,
+        "created_date": document.created_date,
+        "accessed_date": document.accessed_date,
+        "size": round(document.size / 1048576, 2),
+        "tags": document_tags,
+        "shared_users": document.shared_users,
+    }
+    return render(request, "document_detail.html", {"document": doc_data})
+
