@@ -2,6 +2,7 @@ import json
 import logging
 import mimetypes
 import os
+import math
 
 import ollama
 from django.conf import settings
@@ -205,7 +206,29 @@ def chat_api(request):
 
 @login_required
 def document_view(request):
-    context = {
-        "documents": Document.objects.all()
-    }
+    documents = []
+    for document in Document.objects.all():
+        raw_filetype = document.filetype or ""
+        if raw_filetype == "application/pdf":
+            filetype_display = "PDF"
+        elif "/" in raw_filetype:
+            filetype_display = raw_filetype.split("/")[-1].upper()
+        else:
+            filetype_display = raw_filetype.upper()
+        file_name = ""
+        if document.file and getattr(document.file, "name", ""):
+            file_name = document.file.name.split("/")[-1]
+        documents.append({
+            "id": document.pk,
+            "name": file_name or f"Document {document.pk}",
+            "author": document.author,
+            "filetype": filetype_display,
+            "modified_date": document.modified_date,
+            "created_date": document.created_date,
+            "accessed_date": document.accessed_date,
+            "size": round(document.size / 1024 / 1024, 2),
+            "tags": document.tags,
+            "shared_users": document.shared_users,
+        })
+    context = {"documents": documents}
     return render(request, "documents.html", context)
