@@ -1,424 +1,311 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>MagicDocu - Smart Library Grid (Dark Mode)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#8b5cf6", // Violet
-                        "primary-content": "#ffffff",
-                        "secondary-accent": "#06b6d4", // Cyan for active states
-                        "background-main": "#0f0b15", // Very dark background
-                        "background-card": "#1e1b2e", // Dark gray/purple for cards
-                        "background-sidebar": "#161321",
-                        "border-dark": "#2d2a42",
-                        "text-primary": "#f3f4f6",
-                        "text-secondary": "#9ca3af",
-                        "text-muted": "#6b7280",
-                    },
-                    fontFamily: {
-                        display: ["Inter", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "0.5rem",
-                        lg: "1rem",
-                        xl: "1.5rem",
-                        full: "9999px",
-                    },
-                    boxShadow: {
-                        'glow': '0 0 15px -3px rgba(139, 92, 246, 0.3)',
-                    }
-                },
-            },
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-            .glass-header {
-                background: rgba(22, 19, 33, 0.85);
-                backdrop-filter: blur(12px);
-            }
-            .glass-card {
-                background: rgba(30, 27, 46, 0.6);
-                backdrop-filter: blur(8px);
-            }
-        }
-    </style>
-</head>
+{% block title %}MagicDocu - Smart Library Grid (Dark Mode){% endblock %}
 
-<body
-    class="bg-background-main text-text-primary font-display antialiased min-h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-white">
-    <header
-        class="flex items-center justify-between whitespace-nowrap glass-header border-b border-border-dark px-8 py-4 sticky top-0 z-50">
-        <div class="flex items-center gap-12 w-full">
-            <div class="flex items-center gap-3 text-text-primary min-w-[200px]">
-                <div class="size-8 text-primary">
-                    <span class="material-symbols-outlined text-4xl">auto_awesome_mosaic</span>
+{% block extra_head %}{% endblock %}
+
+{% block content %}
+<div class="flex flex-1 overflow-hidden">
+    <aside
+        class="w-72 bg-background-sidebar border-r border-border-dark flex flex-col overflow-y-auto hidden lg:flex py-6 px-4 custom-scrollbar">
+        <div class="flex items-center justify-between mb-8 px-2">
+            <h3 class="text-lg font-bold text-text-primary">Filters</h3>
+            <button
+                class="text-xs font-medium text-secondary-accent hover:text-secondary-accent/80 transition-colors">Reset
+                All</button>
+        </div>
+        <div class="space-y-1 mb-8">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary font-medium border border-primary/20"
+                href="#">
+                <span class="material-symbols-outlined">grid_view</span>
+                All Documents
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-text-secondary hover:text-text-primary transition-colors"
+                href="#">
+                <span class="material-symbols-outlined">schedule</span>
+                Recent
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-text-secondary hover:text-text-primary transition-colors"
+                href="#">
+                <span class="material-symbols-outlined">star</span>
+                Favorites
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-text-secondary hover:text-text-primary transition-colors"
+                href="#">
+                <span class="material-symbols-outlined">delete</span>
+                Trash
+            </a>
+        </div>
+        <div class="h-px bg-border-dark my-2 mx-2"></div>
+        <div class="flex flex-col gap-6 mt-6 px-2">
+            <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between group cursor-pointer">
+                    <span
+                        class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Date
+                        Modified</span>
+                    <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
                 </div>
-                <h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">MagicDocu</h2>
-            </div>
-            <label class="flex flex-col flex-1 max-w-2xl relative group">
-                <div
-                    class="flex w-full items-stretch rounded-xl h-12 bg-white/5 border border-white/10 group-focus-within:border-primary/50 group-focus-within:bg-white/10 group-focus-within:shadow-[0_0_20px_rgba(139,92,246,0.2)] transition-all duration-300">
-                    <div class="text-text-secondary flex items-center justify-center pl-4 rounded-l-xl">
-                        <span class="material-symbols-outlined">search</span>
-                    </div>
-                    <input
-                        class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl bg-transparent text-text-primary focus:outline-0 focus:ring-0 border-none h-full placeholder:text-text-secondary/70 px-4 text-base font-normal leading-normal"
-                        placeholder="Search documents, tags, or OCR content..." value="" />
-                    <div
-                        class="text-text-secondary flex items-center justify-center pr-4 rounded-r-xl cursor-pointer hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined">tune</span>
-                    </div>
-                </div>
-            </label>
-            <div class="flex items-center justify-end gap-6 flex-1">
-                <nav class="hidden xl:flex items-center gap-8">
-                    <a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal"
-                        href="#">Dashboard</a>
-                    <a class="text-primary text-sm font-medium leading-normal relative after:content-[''] after:absolute after:-bottom-6 after:left-0 after:w-full after:h-0.5 after:bg-primary after:shadow-[0_0_8px_#8b5cf6]"
-                        href="#">Library</a>
-                    <a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal"
-                        href="#">Upload</a>
-                </nav>
-                <div class="flex items-center gap-4">
-                    <button
-                        class="size-10 flex items-center justify-center rounded-full hover:bg-white/10 text-text-secondary transition-colors relative">
-                        <span class="material-symbols-outlined">notifications</span>
+                <div class="flex flex-col gap-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center">
+                            <input
+                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                type="checkbox" />
+                            <span
+                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                        </div>
                         <span
-                            class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-background-sidebar"></span>
-                    </button>
+                            class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Today</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center">
+                            <input checked=""
+                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                type="checkbox" />
+                            <span
+                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                        </div>
+                        <span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
+                            7 Days</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center">
+                            <input
+                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                type="checkbox" />
+                            <span
+                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                        </div>
+                        <span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
+                            30 Days</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between group cursor-pointer">
+                    <span
+                        class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">File
+                        Type</span>
+                    <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
                     <button
-                        class="flex items-center justify-center overflow-hidden rounded-xl h-10 px-6 bg-primary text-white text-sm font-bold shadow-[0_4px_20px_rgba(139,92,246,0.3)] hover:shadow-[0_4px_25px_rgba(139,92,246,0.5)] hover:bg-primary/90 transition-all">
-                        <span class="truncate">Upgrade</span>
-                    </button>
-                    <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-border-dark shadow-sm cursor-pointer hover:border-primary/50 transition-colors"
-                        data-alt="User profile picture"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCrs8hyA7AzWog14-YXEm3lmgANDQezcL2Dd3m0cvZ7DlTfYelNFFznjxBCqhklXQPP7qeW1nmdW6ulRrre3EhHrHd9NuVd5LkFzjZcHeiWIvriNj-rPeFCDYQs4Gbnbp0HeaOUvs33OVNSAr7ING1TyBk-OHtTUmKLltYfOqCuOAKICHh5nYkNEndJVY-9OUbsoa5TwH9MFkhhgS-IBi0Ue2Ub6JMgI_qZoHUiPZ5zbtGQVw7OBFJ9qyoLEafxopFvdBSJdvUXDd8");'>
-                    </div>
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-white border border-primary shadow-[0_0_10px_rgba(139,92,246,0.4)]">PDF</button>
+                    <button
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">DOCX</button>
+                    <button
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">XLSX</button>
+                    <button
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">IMG</button>
+                </div>
+            </div>
+            <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between group cursor-pointer">
+                    <span
+                        class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Tags</span>
+                    <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center">
+                            <input checked=""
+                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                type="checkbox" />
+                            <span
+                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="size-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.6)]">
+                            </div>
+                            <span
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Finance</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center">
+                            <input
+                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                type="checkbox" />
+                            <span
+                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="size-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.6)]">
+                            </div>
+                            <span
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Legal</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center">
+                            <input
+                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                type="checkbox" />
+                            <span
+                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="size-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)]">
+                            </div>
+                            <span
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">HR</span>
+                        </div>
+                    </label>
                 </div>
             </div>
         </div>
-    </header>
-    <div class="flex flex-1 overflow-hidden">
-        <aside
-            class="w-72 bg-background-sidebar border-r border-border-dark flex flex-col overflow-y-auto hidden lg:flex py-6 px-4 custom-scrollbar">
-            <div class="flex items-center justify-between mb-8 px-2">
-                <h3 class="text-lg font-bold text-text-primary">Filters</h3>
+        <div class="mt-auto pt-6 px-2">
+            <div class="bg-white/5 rounded-xl p-4 border border-border-dark">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold text-text-primary">Storage Used</span>
+                    <span class="text-xs text-text-secondary">75%</span>
+                </div>
+                <div class="w-full bg-black/20 rounded-full h-2 mb-2 border border-white/5">
+                    <div class="bg-gradient-to-r from-primary to-secondary-accent h-full rounded-full shadow-[0_0_10px_rgba(139,92,246,0.3)]"
+                        style="width: 75%"></div>
+                </div>
+                <p class="text-[10px] text-text-secondary">15.2 GB of 20 GB used</p>
                 <button
-                    class="text-xs font-medium text-secondary-accent hover:text-secondary-accent/80 transition-colors">Reset
-                    All</button>
+                    class="w-full mt-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/10 hover:border-primary/50 transition-colors">Upgrade
+                    Plan</button>
             </div>
-            <div class="space-y-1 mb-8">
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary font-medium border border-primary/20"
-                    href="#">
-                    <span class="material-symbols-outlined">grid_view</span>
-                    All Documents
-                </a>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-text-secondary hover:text-text-primary transition-colors"
-                    href="#">
-                    <span class="material-symbols-outlined">schedule</span>
-                    Recent
-                </a>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-text-secondary hover:text-text-primary transition-colors"
-                    href="#">
-                    <span class="material-symbols-outlined">star</span>
-                    Favorites
-                </a>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-text-secondary hover:text-text-primary transition-colors"
-                    href="#">
-                    <span class="material-symbols-outlined">delete</span>
-                    Trash
-                </a>
-            </div>
-            <div class="h-px bg-border-dark my-2 mx-2"></div>
-            <div class="flex flex-col gap-6 mt-6 px-2">
-                <div class="flex flex-col gap-3">
-                    <div class="flex items-center justify-between group cursor-pointer">
-                        <span
-                            class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Date
-                            Modified</span>
-                        <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative flex items-center">
-                                <input
-                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                    type="checkbox" />
-                                <span
-                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                            </div>
-                            <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Today</span>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative flex items-center">
-                                <input checked=""
-                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                    type="checkbox" />
-                                <span
-                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                            </div>
-                            <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
-                                7 Days</span>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative flex items-center">
-                                <input
-                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                    type="checkbox" />
-                                <span
-                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                            </div>
-                            <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
-                                30 Days</span>
-                        </label>
+        </div>
+    </aside>
+    <main class="flex-1 overflow-y-auto bg-background-main p-8">
+        <div class="max-w-[1600px] mx-auto">
+            <div class="flex flex-col gap-6 mb-8">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-text-primary">Document Library</h1>
+                    <div class="flex items-center gap-3">
+                        <button
+                            class="flex items-center justify-center size-9 rounded-lg bg-background-card border border-border-dark text-text-secondary hover:text-white hover:border-primary/50 transition-colors shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">sort</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-center size-9 rounded-lg bg-primary text-white shadow-[0_0_15px_rgba(139,92,246,0.4)] hover:bg-primary/90 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">add</span>
+                        </button>
                     </div>
                 </div>
-                <div class="flex flex-col gap-3">
-                    <div class="flex items-center justify-between group cursor-pointer">
-                        <span
-                            class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">File
-                            Type</span>
-                        <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <button
-                            class="px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-white border border-primary shadow-[0_0_10px_rgba(139,92,246,0.4)]">PDF</button>
-                        <button
-                            class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">DOCX</button>
-                        <button
-                            class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">XLSX</button>
-                        <button
-                            class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">IMG</button>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-3">
-                    <div class="flex items-center justify-between group cursor-pointer">
-                        <span
-                            class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Tags</span>
-                        <span class="material-symbols-outlined text-text-secondary text-sm">expand_less</span>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative flex items-center">
-                                <input checked=""
-                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                    type="checkbox" />
-                                <span
-                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.6)]">
-                                </div>
-                                <span
-                                    class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Finance</span>
-                            </div>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative flex items-center">
-                                <input
-                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                    type="checkbox" />
-                                <span
-                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.6)]">
-                                </div>
-                                <span
-                                    class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Legal</span>
-                            </div>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative flex items-center">
-                                <input
-                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                    type="checkbox" />
-                                <span
-                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)]">
-                                </div>
-                                <span
-                                    class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">HR</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-auto pt-6 px-2">
-                <div class="bg-white/5 rounded-xl p-4 border border-border-dark">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-semibold text-text-primary">Storage Used</span>
-                        <span class="text-xs text-text-secondary">75%</span>
-                    </div>
-                    <div class="w-full bg-black/20 rounded-full h-2 mb-2 border border-white/5">
-                        <div class="bg-gradient-to-r from-primary to-secondary-accent h-full rounded-full shadow-[0_0_10px_rgba(139,92,246,0.3)]"
-                            style="width: 75%"></div>
-                    </div>
-                    <p class="text-[10px] text-text-secondary">15.2 GB of 20 GB used</p>
-                    <button
-                        class="w-full mt-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/10 hover:border-primary/50 transition-colors">Upgrade
-                        Plan</button>
-                </div>
-            </div>
-        </aside>
-        <main class="flex-1 overflow-y-auto bg-background-main p-8">
-            <div class="max-w-[1600px] mx-auto">
-                <div class="flex flex-col gap-6 mb-8">
-                    <div class="flex items-center justify-between">
-                        <h1 class="text-2xl font-bold text-text-primary">Document Library</h1>
-                        <div class="flex items-center gap-3">
-                            <button
-                                class="flex items-center justify-center size-9 rounded-lg bg-background-card border border-border-dark text-text-secondary hover:text-white hover:border-primary/50 transition-colors shadow-sm">
-                                <span class="material-symbols-outlined text-[20px]">sort</span>
-                            </button>
-                            <button
-                                class="flex items-center justify-center size-9 rounded-lg bg-primary text-white shadow-[0_0_15px_rgba(139,92,246,0.4)] hover:bg-primary/90 transition-colors">
-                                <span class="material-symbols-outlined text-[20px]">add</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <span class="text-sm text-text-secondary font-medium mr-2">Active Filters:</span>
-                        <div
-                            class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
-                            <span class="text-xs font-semibold text-secondary-accent">Type:</span>
-                            <span>PDF</span>
-                            <button
-                                class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
-                                <span class="material-symbols-outlined text-[14px]">close</span>
-                            </button>
-                        </div>
-                        <div
-                            class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
-                            <span class="text-xs font-semibold text-secondary-accent">Time:</span>
-                            <span>Last 7 Days</span>
-                            <button
-                                class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
-                                <span class="material-symbols-outlined text-[14px]">close</span>
-                            </button>
-                        </div>
-                        <div
-                            class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
-                            <span class="text-xs font-semibold text-secondary-accent">Tag:</span>
-                            <div class="size-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]"></div>
-                            <span>Finance</span>
-                            <button
-                                class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
-                                <span class="material-symbols-outlined text-[14px]">close</span>
-                            </button>
-                        </div>
-                        <button
-                            class="text-xs font-medium text-text-secondary hover:text-primary ml-2 underline decoration-dashed transition-colors">Clear
-                            All</button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
-                    {% for document in documents %}
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span class="text-sm text-text-secondary font-medium mr-2">Active Filters:</span>
                     <div
-                        class="group flex flex-col bg-background-card rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer h-full">
-                        <div class="relative w-full aspect-[4/5] bg-[#12101a] overflow-hidden">
-                            <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                                data-alt="Document preview"
-                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB4Oo5HA43sUdINalnEfrJ6HPCmcAxjM39zbXawzGcidkt02tPaGJnrhjEuGGRwa6xPq8-RH30onEDHqpFalkOr-fpGy1GK95TZ0DoaXPBeCbuQ_kLfaxgpUOCE-q-OxqHginjfvaH0j2jrHHbtuA0PCDYdfkuMdVqqZggZxe1JYl0H7ODwjOI0cI04mnbhIL4k6HwJND_Olm8sxDW9WUtgD7Wf020ZfmghBxwe6QCHknonChSkBE6slWRh3fJzm_emNyFA2RYc-_w');">
-                            </div>
-                            <div
-                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-start justify-end p-2 backdrop-blur-[2px]">
-                                <div
-                                    class="bg-background-card/90 rounded-lg p-1 shadow-md flex flex-col gap-1 border border-white/10">
-                                    <button
-                                        class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                        title="Download">
-                                        <span class="material-symbols-outlined text-[18px]">download</span>
-                                    </button>
-                                    <button
-                                        class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                        title="Share">
-                                        <span class="material-symbols-outlined text-[18px]">share</span>
-                                    </button>
-                                    <button
-                                        class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                        title="More">
-                                        <span class="material-symbols-outlined text-[18px]">more_vert</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div
-                                class="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold border border-white/10 shadow-lg uppercase tracking-wider flex items-center gap-1">
-                                {% if document.filetype == "PDF" %}
-                                <span class="material-symbols-outlined text-[12px] text-red-400">picture_as_pdf</span>
-                                <span class="text-red-400">{{ document.filetype }}</span>
-                                {% elif document.filetype == "DOCX" %}
-                                <span class="material-symbols-outlined text-[12px] text-blue-400">description</span>
-                                <span class="text-blue-400">{{ document.filetype }}</span>
-                                {% elif document.filetype == "XLSX" %}
-                                <span class="material-symbols-outlined text-[12px] text-green-400">table_view</span>
-                                <span class="text-green-400">{{ document.filetype }}</span>
-                                {% elif document.filetype == "PPTX" %}
-                                <span class="material-symbols-outlined text-[12px] text-orange-400">slideshow</span>
-                                <span class="text-orange-400">{{ document.filetype }}</span>
-                                {% else %}
-                                <span
-                                    class="material-symbols-outlined text-[12px] text-text-secondary">insert_drive_file</span>
-                                <span class="text-text-secondary">{{ document.filetype|default:"FILE" }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="p-4 flex flex-col gap-1">
-                            <div class="flex items-start justify-between gap-2">
-                                <h4 class="text-sm font-semibold text-text-primary line-clamp-1 group-hover:text-primary transition-colors"
-                                    title="{{ document.name }}">{{ document.name }}</h4>
-                            </div>
-                            <div class="flex items-center gap-2 mt-1">
-                                {% for tag in document.tags.all %}
-                                {% if forloop.counter <= 2 %} <span
-                                    class="bg-white/5 border border-border-dark text-text-secondary text-[10px] font-medium px-2 py-0.5 rounded-full">
-                                    {{ tag.name }}</span>
-                                    {% endif %}
-                                    {% empty %}
-                                    <span
-                                        class="bg-white/5 border border-border-dark text-text-secondary text-[10px] font-medium px-2 py-0.5 rounded-full">Untagged</span>
-                                    {% endfor %}
-                                    <span class="text-xs text-text-secondary">{{ document.size }} MB</span>
-                            </div>
-                            <div class="mt-2 text-[10px] text-text-secondary flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">calendar_today</span>
-                                {{ document.modified_date|date:"M d, Y" }}
-                            </div>
-                        </div>
+                        class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
+                        <span class="text-xs font-semibold text-secondary-accent">Type:</span>
+                        <span>PDF</span>
+                        <button
+                            class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">close</span>
+                        </button>
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="flex items-center justify-center mt-12 pb-8">
+                    <div
+                        class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
+                        <span class="text-xs font-semibold text-secondary-accent">Time:</span>
+                        <span>Last 7 Days</span>
+                        <button
+                            class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">close</span>
+                        </button>
+                    </div>
+                    <div
+                        class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
+                        <span class="text-xs font-semibold text-secondary-accent">Tag:</span>
+                        <div class="size-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]"></div>
+                        <span>Finance</span>
+                        <button
+                            class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">close</span>
+                        </button>
+                    </div>
                     <button
-                        class="flex items-center gap-2 px-6 py-2.5 rounded-full border border-border-dark bg-background-card text-text-primary hover:bg-white/5 hover:border-primary/50 transition-all text-sm font-medium shadow-sm hover:shadow-[0_0_15px_rgba(139,92,246,0.2)]">
-                        <span>Load More Documents</span>
-                        <span class="material-symbols-outlined text-sm">expand_more</span>
-                    </button>
+                        class="text-xs font-medium text-text-secondary hover:text-primary ml-2 underline decoration-dashed transition-colors">Clear
+                        All</button>
                 </div>
             </div>
-        </main>
-    </div>
-
-</body>
-
-</html>
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+                {% for document in documents %}
+                <a href="{% url 'chat' document.id %}"
+                    class="group flex flex-col bg-background-card rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer h-full">
+                    <div class="relative w-full aspect-[4/5] bg-[#12101a] overflow-hidden">
+                        <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                            data-alt="Document preview"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB4Oo5HA43sUdINalnEfrJ6HPCmcAxjM39zbXawzGcidkt02tPaGJnrhjEuGGRwa6xPq8-RH30onEDHqpFalkOr-fpGy1GK95TZ0DoaXPBeCbuQ_kLfaxgpUOCE-q-OxqHginjfvaH0j2jrHHbtuA0PCDYdfkuMdVqqZggZxe1JYl0H7ODwjOI0cI04mnbhIL4k6HwJND_Olm8sxDW9WUtgD7Wf020ZfmghBxwe6QCHknonChSkBE6slWRh3fJzm_emNyFA2RYc-_w');">
+                        </div>
+                        <div
+                            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-start justify-end p-2 backdrop-blur-[2px]">
+                            <div
+                                class="bg-background-card/90 rounded-lg p-1 shadow-md flex flex-col gap-1 border border-white/10">
+                                <button
+                                    class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
+                                    title="Download">
+                                    <span class="material-symbols-outlined text-[18px]">download</span>
+                                </button>
+                                <button
+                                    class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
+                                    title="Share">
+                                    <span class="material-symbols-outlined text-[18px]">share</span>
+                                </button>
+                                <button
+                                    class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
+                                    title="More">
+                                    <span class="material-symbols-outlined text-[18px]">more_vert</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div
+                            class="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold border border-white/10 shadow-lg uppercase tracking-wider flex items-center gap-1">
+                            {% if document.filetype == "PDF" %}
+                            <span class="material-symbols-outlined text-[12px] text-red-400">picture_as_pdf</span>
+                            <span class="text-red-400">{{ document.filetype }}</span>
+                            {% elif document.filetype == "DOCX" %}
+                            <span class="material-symbols-outlined text-[12px] text-blue-400">description</span>
+                            <span class="text-blue-400">{{ document.filetype }}</span>
+                            {% elif document.filetype == "XLSX" %}
+                            <span class="material-symbols-outlined text-[12px] text-green-400">table_view</span>
+                            <span class="text-green-400">{{ document.filetype }}</span>
+                            {% elif document.filetype == "PPTX" %}
+                            <span class="material-symbols-outlined text-[12px] text-orange-400">slideshow</span>
+                            <span class="text-orange-400">{{ document.filetype }}</span>
+                            {% else %}
+                            <span
+                                class="material-symbols-outlined text-[12px] text-text-secondary">insert_drive_file</span>
+                            <span class="text-text-secondary">{{ document.filetype|default:"FILE" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col gap-1">
+                        <div class="flex items-start justify-between gap-2">
+                            <h4 class="text-sm font-semibold text-text-primary line-clamp-1 group-hover:text-primary transition-colors"
+                                title="{{ document.name }}">{{ document.name }}</h4>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            {% for tag in document.tags.all %}
+                            {% if forloop.counter <= 2 %} <span
+                                class="bg-white/5 border border-border-dark text-text-secondary text-[10px] font-medium px-2 py-0.5 rounded-full">
+                                {{ tag.name }}</span>
+                                {% endif %}
+                                {% empty %}
+                                <span
+                                    class="bg-white/5 border border-border-dark text-text-secondary text-[10px] font-medium px-2 py-0.5 rounded-full">Untagged</span>
+                                {% endfor %}
+                                <span class="text-xs text-text-secondary">{{ document.size }} MB</span>
+                        </div>
+                        <div class="mt-2 text-[10px] text-text-secondary flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[12px]">calendar_today</span>
+                            {{ document.modified_date|date:"M d, Y" }}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            <div class="flex items-center justify-center mt-12 pb-8">
+                <button
+                    class="flex items-center gap-2 px-6 py-2.5 rounded-full border border-border-dark bg-background-card text-text-primary hover:bg-white/5 hover:border-primary/50 transition-all text-sm font-medium shadow-sm hover:shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+                    <span>Load More Documents</span>
+                    <span class="material-symbols-outlined text-sm">expand_more</span>
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
