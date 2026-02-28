@@ -19,9 +19,6 @@ from core.tasks import process_document_embeddings
 
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# Existing views
-# ---------------------------------------------------------------------------
 
 def index(request):
     return render(request, "index.html")
@@ -64,7 +61,7 @@ def upload_file(request):
             # Trigger async embedding generation for PDFs
             if doc.filetype and "pdf" in doc.filetype.lower():
                 process_document_embeddings.delay(doc.id)
-            return HttpResponseRedirect("/success/url/")
+            return HttpResponseRedirect("/")
     else:
         form = UploadFileForm()
     return render(request, "upload.html", {"form": form, "file_meta": file_meta})

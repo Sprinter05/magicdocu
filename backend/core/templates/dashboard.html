@@ -8,6 +8,52 @@
         border-color: #895af6;
         background-color: rgba(137, 90, 246, 0.12);
     }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .file-animate {
+        animation: slideIn 0.3s ease-out forwards;
+    }
+
+    .spinner {
+        display: none;
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 3px solid rgba(137, 90, 246, 0.2);
+        border-radius: 50%;
+        border-top-color: #895af6;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    #upload-status-msg {
+        display: none;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .error-msg {
+        color: #ef4444;
+    }
+
+    .success-msg {
+        color: #10b981;
+    }
 </style>
 {% endblock %}
 
@@ -141,14 +187,12 @@
             </div>
 
             <div class="relative">
-                <span
-                    class="material-symbols-outlined absolute -top-4 -left-2 text-primary/40 animate-pulse !text-xl">auto_awesome</span>
-                <span
-                    class="material-symbols-outlined absolute -bottom-2 -right-2 text-primary/40 animate-pulse !text-2xl"
-                    style="animation-delay: 1s;">colors_spark</span>
-                <div id="upload-dropzone"
-                    class="dropzone cursor-pointer border-2 border-dashed border-primary/30 rounded-3xl p-12 bg-primary/5 backdrop-blur-sm relative group transition-all hover:bg-primary/10 hover:border-primary/60 flex flex-col items-center justify-center text-center">
-                    <input id="file-input" type="file" class="sr-only" multiple accept="application/pdf,image/*" />
+                <form id="upload-dropzone"
+                    class="dropzone cursor-pointer border-2 border-dashed border-primary/30 rounded-3xl p-12 bg-primary/5 backdrop-blur-sm relative group transition-all hover:bg-primary/10 hover:border-primary/60 flex flex-col items-center justify-center text-center"
+                    action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input id="file-input" name="file" type="file" class="sr-only" multiple
+                        accept="application/pdf,image/*" />
                     <div
                         class="absolute inset-0 rounded-3xl opacity-20 pointer-events-none bg-gradient-to-t from-primary/20 to-transparent">
                     </div>
@@ -160,9 +204,12 @@
                     <p class="text-slate-400 max-w-md mx-auto mb-8">Drag & Drop your scrolls to start the magical OCR
                         process. Supported: PDF, JPG, PNG up to 50MB.</p>
                     <button id="upload-btn" type="button"
-                        class="px-8 py-3 bg-primary hover:bg-primary/80 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/25">Upload
-                        Document</button>
-                </div>
+                        class="px-8 py-3 bg-primary hover:bg-primary/80 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2">
+                        <span>Upload Document</span>
+                        <div id="upload-spinner" class="spinner"></div>
+                    </button>
+                    <div id="upload-status-msg"></div>
+                </form>
                 <div
                     class="mt-4 bg-background-light dark:bg-background-dark/40 border border-primary/10 rounded-2xl p-4 shadow-sm">
                     <div class="flex items-center justify-between gap-3">
@@ -300,10 +347,29 @@
         const uploadList = document.getElementById('upload-list');
         const uploadEmpty = document.getElementById('upload-empty');
         const uploadCount = document.getElementById('upload-count');
+        const uploadSpinner = document.getElementById('upload-spinner');
+        const statusMsg = document.getElementById('upload-status-msg');
+        const csrfToken = dropzone.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
+        const uploadUrl = dropzone.getAttribute('action');
 
         const uploaded = [];
 
         if (!dropzone || !fileInput) return;
+
+        const showStatus = (text, isError = false) => {
+            if (!statusMsg) return;
+            statusMsg.textContent = text;
+            statusMsg.className = isError ? 'error-msg mt-2' : 'success-msg mt-2';
+            statusMsg.style.display = 'block';
+            setTimeout(() => { statusMsg.style.display = 'none'; }, 5000);
+        };
+
+        const setLoading = (loading) => {
+            if (!uploadSpinner || !uploadBtn) return;
+            uploadSpinner.style.display = loading ? 'block' : 'none';
+            uploadBtn.disabled = loading;
+            uploadBtn.style.opacity = loading ? '0.7' : '1';
+        };
 
         const formatSize = (bytes) => {
             if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -322,9 +388,9 @@
             uploadEmpty.classList.add('hidden');
             uploadList.classList.remove('hidden');
             uploadList.innerHTML = '';
-            uploaded.slice(-10).forEach((file, idx) => {
+            [...uploaded].reverse().slice(0, 10).forEach((file, idx) => {
                 const li = document.createElement('li');
-                li.className = 'flex items-center justify-between gap-3 rounded-xl border border-primary/10 bg-primary/5 px-3 py-2';
+                li.className = 'flex items-center justify-between gap-3 rounded-xl border border-primary/10 bg-primary/5 px-3 py-2' + (idx === 0 ? ' file-animate' : '');
                 li.innerHTML = `
                     <div class="flex items-center gap-2 min-w-0">
                         <span class="material-symbols-outlined text-primary text-base">insert_drive_file</span>
@@ -333,33 +399,66 @@
                             <p class="text-xs text-slate-500 truncate">${file.type} · ${formatSize(file.size)}</p>
                         </div>
                     </div>
-                    <span class="text-[11px] text-slate-500">#${uploaded.length - 10 + idx + 1}</span>
                 `;
                 uploadList.appendChild(li);
             });
         };
 
-        const recordFiles = (fileList) => {
+        const addUploadedFile = (file) => {
+            uploaded.push({ name: file.name, type: file.type || '(no type)', size: file.size });
+            renderList();
+        };
+
+        const uploadSingle = async (file) => {
+            if (!uploadUrl || !csrfToken) {
+                throw new Error('Missing upload configuration');
+            }
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await fetch(uploadUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                },
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error(`Upload failed with status ${response.status}`);
+            }
+        };
+
+        const uploadFiles = async (fileList) => {
             const files = Array.from(fileList || []);
             if (!files.length) return;
-            files.forEach((file) => {
-                uploaded.push({ name: file.name, type: file.type || '(no type)', size: file.size });
-            });
-            console.group('Uploaded files');
-            files.forEach((file, idx) => {
-                console.log(`#${idx + 1}`, file.name, file.type || '(no type)', formatSize(file.size));
-            });
-            console.groupEnd();
-            renderList();
+            setLoading(true);
+            let errors = 0;
+            for (const file of files) {
+                try {
+                    await uploadSingle(file);
+                    addUploadedFile(file);
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    errors++;
+                }
+            }
+            setLoading(false);
+            if (errors > 0) {
+                showStatus(`Failed to upload ${errors} file(s).`, true);
+            } else {
+                showStatus('Spell casted successfully! Documents uploaded.');
+            }
         };
 
         const openPicker = () => fileInput.click();
 
-        uploadBtn?.addEventListener('click', openPicker);
+        uploadBtn?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            openPicker();
+        });
         dropzone.addEventListener('click', openPicker);
 
         fileInput.addEventListener('change', (event) => {
-            recordFiles(event.target.files);
+            uploadFiles(event.target.files);
             fileInput.value = '';
         });
 
@@ -375,7 +474,7 @@
         dropzone.addEventListener('drop', (event) => {
             event.preventDefault();
             dropzone.classList.remove('drop-active');
-            recordFiles(event.dataTransfer?.files);
+            uploadFiles(event.dataTransfer?.files);
             fileInput.value = '';
         });
 
