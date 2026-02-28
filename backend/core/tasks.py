@@ -5,6 +5,8 @@ import ollama
 from celery import shared_task
 from django.conf import settings
 from pgvector.django import CosineDistance
+from .workers import convert_to_md
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -49,14 +51,34 @@ def _embed_texts(texts: list[str]) -> list[list[float]]:
 # Celery task
 # ---------------------------------------------------------------------------
 
-# @shared_task(bind=True, max_retries=3, default_retry_delay=30)
-# def process_document_keywords(self, document_id: int):
-#     base = f"Only output in your following prompt a comma separated list of keywords for the following text, up to a max of 10 keywords: "
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def process_document_keywords(self, document_id: int):
+    from core.models import Document, DocumentKeyword  # local import to avoid circular
 
-#         keywords = ollama.chat(
-#             model="llama3.2:1b",
-#             messages=[{"role": "user", "content": f"{base} {query}"}],
-#         )
+    try:
+        document = Document.objects.get(pk=document_id)
+    except Document.DoesNotExist:
+        logger.error("Document %s does not exist", document_id)
+        return
+
+    text = convert_to_md(document.file.name)
+
+    base = f"Only output in your following prompt a comma separated list of keywords for the following text, up to a max of 10 keywords: "
+    keywords = ollama.chat(
+        model="llama3.2",
+        messages=[{"role": "user", "content": f"{base} {text}"}],
+    )
+
+    words = (json.loads(keywords.model_dump_json())["message"]["content"]).split(", ")
+    embeddings = _embed_texts(words)
+
+    for idx, (text, embedding) in enumerate(zip(words, embeddings)):
+        doc = DocumentKeyword(
+            document = document,
+            keyword = text,
+            embedding = embedding
+        )
+        doc.save()
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)

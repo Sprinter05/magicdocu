@@ -27,7 +27,7 @@ class DocumentHistory(models.Model):
     user = models.ForeignKey("users.AuthUser", on_delete=models.CASCADE)
     modification_date = models.DateTimeField(null=False)
 
-class DocumentKeywords(models.Model):
+class DocumentKeyword(models.Model):
     document = models.ForeignKey("core.Document", on_delete=models.CASCADE)
     keyword = models.TextField(null=False)
     embedding = VectorField(
