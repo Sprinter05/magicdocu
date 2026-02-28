@@ -202,16 +202,6 @@ def chat_api(request):
         "message": assistant_content,
     })
 
-def search_view(request):
-    query = request.GET.get("q", "").strip()
-
-    if not query:
-        return render(request, "search.html", {"query": query, "results": []})
-
-    result = search_by_text(query)
-
-    return JsonResponse({"result": [(doc.id) for doc in result]}, status=202)
-
 @login_required
 def document_view(request):
     document_tags = []
@@ -245,7 +235,12 @@ def document_view(request):
         filtered_documents = filtered_documents.filter(created_date__gte=timezone.now())
     elif date_filter == "30":
         filtered_documents = filtered_documents.filter(created_date__gte=datetime.timedelta(days=30))
-    
+
+    query = request.GET.get("q", "").strip()
+    if query:
+        result = search_by_text(query)
+        filtered_documents = filtered_documents.filter(id__in=[(doc.id) for doc in result])
+
     for document in filtered_documents:
         file_name = document.file.name.split("/")[-1]
         extension = file_name.split(".")[-1]
