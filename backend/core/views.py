@@ -13,7 +13,9 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
+from django.utils import timezone
 from pgvector.django import CosineDistance
+
 
 from core.forms import UploadFileForm, SelectFileForm
 from core.models import ChatMessage, ChatSession, Document, DocumentChunk
@@ -206,29 +208,62 @@ def chat_api(request):
 
 @login_required
 def document_view(request):
+    document_tags = []
     documents = []
-    for document in Document.objects.all():
-        raw_filetype = document.filetype or ""
-        if raw_filetype == "application/pdf":
-            filetype_display = "PDF"
-        elif "/" in raw_filetype:
-            filetype_display = raw_filetype.split("/")[-1].upper()
-        else:
-            filetype_display = raw_filetype.upper()
-        file_name = ""
-        if document.file and getattr(document.file, "name", ""):
-            file_name = document.file.name.split("/")[-1]
+    all_extensions = []
+    all_tags = []
+    all_documents = Document.objects.all()
+    
+    filtered_documents = all_documents
+    tag_filter = request.GET.get("tags")
+    if tag_filter:
+        tag_filter = tag_filter.strip().split(",")
+
+        filtered_documents = all_documents.filter(tags__name__in=tag_filter)
+
+    filetype_param = request.GET.get("filetype")
+    if filetype_param:
+        filetype_filter = [ft.strip().lower() for ft in filetype_param.split(",") if ft.strip()]
+        filetype_query = Q()
+        for ft in filetype_filter:
+            filetype_query |= Q(file__iendswith=f".{ft}")
+        filtered_documents = filtered_documents.filter(filetype_query)
+
+    date_filter = request.GET.get("date_filter")
+    
+    if date_filter == "today":
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now())
+    elif date_filter == "30":
+        filtered_documents = filtered_documents.filter(created_date__gte=datetime.timedelta(days=30))
+    
+    for document in filtered_documents:
+        file_name = document.file.name.split("/")[-1]
+        extension = file_name.split(".")[-1]
+
+        if extension not in all_extensions:
+            all_extensions.append(extension)
+
+        document_tags = document.tags.all()
+        for tag in document_tags:
+            if tag not in all_tags:
+                all_tags.append(tag)
+
         documents.append({
             "id": document.pk,
-            "name": file_name or f"Document {document.pk}",
+            "name": file_name,
             "author": document.author,
-            "filetype": filetype_display,
+            "filetype": extension,
             "modified_date": document.modified_date,
             "created_date": document.created_date,
             "accessed_date": document.accessed_date,
-            "size": round(document.size / 1024 / 1024, 2),
-            "tags": document.tags,
+            "size": round(document.size / 1048576, 2),
+            "tags": document_tags,
             "shared_users": document.shared_users,
         })
-    context = {"documents": documents}
+
+    context = {
+        "documents": documents,
+        "all_extensions": all_extensions,
+        "all_tags": document_tags
+    }
     return render(request, "documents.html", context)
