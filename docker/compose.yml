@@ -8,7 +8,8 @@ services:
     volumes:
       - "ollama_models:/root/.ollama"
     post_start:
-      - command: ollama pull mxbai-embed-large && ollama pull llama3.2
+      - command: ollama pull mxbai-embed-large
+      - command: ollama pull llama3.2
     networks:
       - intnet
       
