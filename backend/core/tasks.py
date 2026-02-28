@@ -69,7 +69,8 @@ def get_document_summary(self, document_id: int):
         return
 
     base = f"Only output in your following prompt a summary of the following text, up to a max of 30 words: "
-    response = ollama.chat(
+    client = ollama.Client(host=settings.OLLAMA_BASE_URL)
+    response = client.chat(
         model=settings.OLLAMA_CHAT_MODEL,
         messages=[{"role": "user", "content": f"{base} {text}"}],
     )
@@ -92,7 +93,8 @@ def process_document_keywords(self, document_id: int):
     text = convert_to_md(document.file.name)
 
     base = f"Only output in your following prompt a comma separated list of keywords for the following text, up to a max of 10 keywords: "
-    keywords = ollama.chat(
+    client = ollama.Client(host=settings.OLLAMA_BASE_URL)
+    keywords = client.chat(
         model=settings.OLLAMA_CHAT_MODEL,
         messages=[{"role": "user", "content": f"{base} {text}"}],
     )

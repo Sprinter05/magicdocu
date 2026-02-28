@@ -26,6 +26,7 @@ elastic-transport==8.17.1
 elasticsearch==8.19.3
 elasticsearch-dsl==8.18.0
 et_xmlfile==2.0.0
+gunicorn==25.1.0
 h11==0.16.0
 httpcore==1.0.9
 httpx==0.28.1

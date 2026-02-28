@@ -1,13 +1,12 @@
 #!/bin/bash
 
-IMAGES=("postgres")
+IMAGES=("postgres" "django")
 
 function build_image() {
     IMAGE_NAME=$(echo $1 | cut -d "-" -f 1)
 
     echo "Building ${IMAGE_NAME}..."
 
-    echo "Building development image..."
     docker build -t magicdocu/$IMAGE_NAME -f ./docker/$IMAGE_NAME/Dockerfile .
 
     if [[ $? != 0 ]]; then

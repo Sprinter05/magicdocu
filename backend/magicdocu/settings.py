@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mj_q(u)4oftv20=9(oc*0256!x&^%7&+q&ngam&0&j0i5r&&$b'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-&psk#na5l=p3q8_a+-$4w1f^lt3lx1c@d*p4x$ymm_rn7pwb87')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'magicdocu.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-load_dotenv("../.env")
+load_dotenv(os.environ.get("ENV_FILE", "../.env"))
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
@@ -135,4 +135,3 @@ CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_EMBED_MODEL = "nomic-embed-text:v1.5"
 OLLAMA_CHAT_MODEL = "llama3.2:1b"
-
