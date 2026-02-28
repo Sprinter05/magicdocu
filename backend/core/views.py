@@ -1,20 +1,14 @@
-import json
-import logging
 import mimetypes
 import os
 
-import ollama
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-from pgvector.django import CosineDistance
 
-from core.forms import UploadFileForm, SelectFileForm
+from core.forms import UploadFileForm
 from core.models import ChatMessage, ChatSession, Document, DocumentChunk
 from core.tasks import *
 from core.workers import *
@@ -28,7 +22,6 @@ def index(request):
 
 @login_required
 def dashboard(request):
-    docs = search_by_embeddings.delay("prescripciones")
     documents = Document.objects.filter(
         Q(author=request.user) | Q(shared_users=request.user)
     ).distinct()
@@ -211,3 +204,17 @@ def document_list(request):
 
     documents = Document.objects.filter(author=request.user)
     return render(request, "document_list.html", {"documents": documents})
+
+# ---------------------------------------------------------------------------
+# Document search view
+# ---------------------------------------------------------------------------
+def search_view(request):
+    query = request.GET.get("q", "").strip()
+
+    if not query:
+        return render(request, "search.html", {"query": query, "results": []})
+    results = []
+
+    result = search_by_embeddings(query)
+
+    return JsonResponse({"result": [(doc.file.path) for doc in result]}, status=202)

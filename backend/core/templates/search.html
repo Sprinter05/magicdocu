@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Buscar</title>
+</head>
+<body>
+    <h1>Buscar</h1>
+
+    <form method="get" action="">
+        <label for="q">Término:</label>
+        <input id="q" name="q" type="text" placeholder="Escribe tu búsqueda" value="{{ q }}">
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if q %}
+        <p>Has buscado: {{ q }}</p>
+    {% endif %}
+
+</body>
+</html>
+
+<script>
+
+// javascript (snippet para la plantilla -> polling)
+async function startSearch(query) {
+  const r = await fetch(`?q=${encodeURIComponent(query)}`);
+  if (!r.ok && r.status !== 202) { console.error("failed to start"); return; }
+  const { task_id } = await r.json();
+  pollStatus(task_id);
+}
+
+async function pollStatus(taskId) {
+  const interval = 1000;
+  const maxAttempts = 60;
+  let attempts = 0;
+  const timer = setInterval(async () => {
+    attempts += 1;
+    const r = await fetch(`status/${encodeURIComponent(taskId)}`);
+    const j = await r.json();
+    if (j.status === "SUCCESS") {
+      clearInterval(timer);
+      // fetch results from server (or j.results if included)
+      const results = j.results || [];
+      // renderizar resultados en UI
+      console.log("Resultados:", results);
+    } else if (j.status === "FAILURE" || attempts >= maxAttempts) {
+      clearInterval(timer);
+      console.error("Search failed or timed out", j);
+    }
+    // si sigue PENDING/STARTED, seguir esperando
+  }, interval);
+}
+</script>
