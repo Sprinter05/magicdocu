@@ -210,9 +210,13 @@ def document_view(request):
     all_tags = []
     all_documents = Document.objects.all()
 
-    tag_filter = request.GET.get("download")
-    if tag_filter:
-        return FileResponse(all_documents.filter(file=tag_filter).first().file.open("rb"), as_attachment=True)
+    downfile = request.GET.get("download")
+    if downfile:
+        return FileResponse(all_documents.filter(file=downfile).first().file.open("rb"), as_attachment=True)
+
+    delfile = request.GET.get("delete")
+    if delfile:
+        all_documents.filter(file=delfile).first().delete()
     
     filtered_documents = all_documents
     tag_filter = request.GET.get("tags")
