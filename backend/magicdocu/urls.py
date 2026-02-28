@@ -24,6 +24,7 @@ urlpatterns = [
     path('', core_views.index, name='index'),
     path('dashboard/', core_views.dashboard, name='dashboard'),
     path('', include('users.urls')),
+    path('', include('core.urls')),
     path('upload/', include('core.urls'))
 ]
 
