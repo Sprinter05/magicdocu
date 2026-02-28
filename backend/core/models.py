@@ -7,7 +7,7 @@ class Tag(models.Model):
     color = models.CharField() # Use hex color to store (e.g. #AF567D)
 
 class Document(models.Model):
-    path = models.TextField(null=False, unique=True)
+    file = models.FileField(upload_to="uploads/", null=True)
     author = models.ForeignKey("users.AuthUser", on_delete=models.CASCADE)
     filetype = models.CharField(null=False)
     modified_date = models.DateTimeField(null=False)
