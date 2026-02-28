@@ -18,6 +18,11 @@ class Tag(models.Model):
 class DocumentTags(models.Model):
     document_id = models.ForeignKey("core.Document", on_delete=models.CASCADE)
     tag = models.ForeignKey("core.Tag", on_delete=models.CASCADE)
+    
+class DocumentHistory(models.Model):
+    document_id = models.ForeignKey("core.Document", on_delete=models.CASCADE)
+    user_id = models.ForeignKey("users.AuthUser", on_delete=models.CASCADE)
+    modification_date = models.DateTimeField(null=False)
 
 class DocumentSharedUsers(models.Model):
     document_id = models.ForeignKey("core.Document", on_delete=models.CASCADE)
