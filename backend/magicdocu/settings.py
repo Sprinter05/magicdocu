@@ -124,3 +124,4 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = "users.AuthUser"
+CELERY_BROKER_URL = os.environ.get("REDIS_URL")
