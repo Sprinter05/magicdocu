@@ -224,7 +224,7 @@
             </div>
             <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
                 {% for document in documents %}
-                <a href="{% url 'chat' document.id %}"
+                <a href="{% url 'document_detail' document.id %}"
                     class="group flex flex-col bg-background-card rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer h-full">
                     <div class="relative w-full aspect-[4/5] bg-[#12101a] overflow-hidden">
                         <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
