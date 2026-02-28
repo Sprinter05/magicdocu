@@ -241,11 +241,40 @@
                 {% for document in documents %}
                 <a href="{% url 'document_detail' document.id %}"
                     class="group flex flex-col bg-background-card rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer h-full">
-                    <div class="relative w-full aspect-[4/5] bg-[#12101a] overflow-hidden">
-                        <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                            data-alt="Document preview"
-                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB4Oo5HA43sUdINalnEfrJ6HPCmcAxjM39zbXawzGcidkt02tPaGJnrhjEuGGRwa6xPq8-RH30onEDHqpFalkOr-fpGy1GK95TZ0DoaXPBeCbuQ_kLfaxgpUOCE-q-OxqHginjfvaH0j2jrHHbtuA0PCDYdfkuMdVqqZggZxe1JYl0H7ODwjOI0cI04mnbhIL4k6HwJND_Olm8sxDW9WUtgD7Wf020ZfmghBxwe6QCHknonChSkBE6slWRh3fJzm_emNyFA2RYc-_w');">
+                    <div class="relative w-full aspect-[4/5] overflow-hidden">
+                        {% if document.filetype == "pdf" %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-950/30 via-red-900/20 to-red-950/30 transition-all duration-500 group-hover:from-red-900/40 group-hover:via-red-800/30 group-hover:to-red-900/40">
+                            <span class="material-symbols-outlined text-red-400/70 group-hover:text-red-400 transition-colors drop-shadow-[0_0_15px_rgba(248,113,113,0.3)]" style="font-size: 120px;">picture_as_pdf</span>
                         </div>
+                        {% elif document.filetype == "docx" %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-950/30 via-blue-900/20 to-blue-950/30 transition-all duration-500 group-hover:from-blue-900/40 group-hover:via-blue-800/30 group-hover:to-blue-900/40">
+                            <span class="material-symbols-outlined text-blue-400/70 group-hover:text-blue-400 transition-colors drop-shadow-[0_0_15px_rgba(96,165,250,0.3)]" style="font-size: 120px;">description</span>
+                        </div>
+                        {% elif document.filetype == "xlsx" %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-950/30 via-green-900/20 to-green-950/30 transition-all duration-500 group-hover:from-green-900/40 group-hover:via-green-800/30 group-hover:to-green-900/40">
+                            <span class="material-symbols-outlined text-green-400/70 group-hover:text-green-400 transition-colors drop-shadow-[0_0_15px_rgba(74,222,128,0.3)]" style="font-size: 120px;">table_view</span>
+                        </div>
+                        {% elif document.filetype == "pptx" %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-950/30 via-orange-900/20 to-orange-950/30 transition-all duration-500 group-hover:from-orange-900/40 group-hover:via-orange-800/30 group-hover:to-orange-900/40">
+                            <span class="material-symbols-outlined text-orange-400/70 group-hover:text-orange-400 transition-colors drop-shadow-[0_0_15px_rgba(251,146,60,0.3)]" style="font-size: 120px;">slideshow</span>
+                        </div>
+                        {% elif document.filetype == "txt" %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-950/30 via-gray-900/20 to-gray-950/30 transition-all duration-500 group-hover:from-gray-900/40 group-hover:via-gray-800/30 group-hover:to-gray-900/40">
+                            <span class="material-symbols-outlined text-gray-400/70 group-hover:text-gray-400 transition-colors drop-shadow-[0_0_15px_rgba(156,163,175,0.3)]" style="font-size: 120px;">text_snippet</span>
+                        </div>
+                        {% elif document.filetype == "csv" %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-950/30 via-teal-900/20 to-teal-950/30 transition-all duration-500 group-hover:from-teal-900/40 group-hover:via-teal-800/30 group-hover:to-teal-900/40">
+                            <span class="material-symbols-outlined text-teal-400/70 group-hover:text-teal-400 transition-colors drop-shadow-[0_0_15px_rgba(45,212,191,0.3)]" style="font-size: 120px;">table_chart</span>
+                        </div>
+                        {% elif document.filetype == "png" or document.filetype == "jpg" or document.filetype == "jpeg" %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-950/30 via-purple-900/20 to-purple-950/30 transition-all duration-500 group-hover:from-purple-900/40 group-hover:via-purple-800/30 group-hover:to-purple-900/40">
+                            <span class="material-symbols-outlined text-purple-400/70 group-hover:text-purple-400 transition-colors drop-shadow-[0_0_15px_rgba(192,132,252,0.3)]" style="font-size: 120px;">image</span>
+                        </div>
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-950/30 via-slate-900/20 to-slate-950/30 transition-all duration-500 group-hover:from-slate-900/40 group-hover:via-slate-800/30 group-hover:to-slate-900/40">
+                            <span class="material-symbols-outlined text-slate-400/70 group-hover:text-slate-400 transition-colors drop-shadow-[0_0_15px_rgba(148,163,184,0.3)]" style="font-size: 120px;">insert_drive_file</span>
+                        </div>
+                        {% endif %}
                         <div
                             class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-start justify-end p-2 backdrop-blur-[2px]">
                             <div
