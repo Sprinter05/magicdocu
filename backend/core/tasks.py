@@ -62,6 +62,12 @@ def get_document_summary(self, document_id: int):
         return
 
     text = convert_to_md(document.file.name)
+
+    if not text:
+        document.summary = "No summary could be obtained"
+        document.save()
+        return
+
     base = f"Only output in your following prompt a summary of the following text, up to a max of 30 words: "
     response = ollama.chat(
         model=settings.OLLAMA_CHAT_MODEL,
