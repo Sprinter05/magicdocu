@@ -14,24 +14,39 @@
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
         tailwind.config = {
+            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        primary: '#895af6',
+                        primary: "#8b5cf6",
+                        "primary-content": "#ffffff",
+                        "secondary-accent": "#06b6d4",
+                        "background-main": "#0f0b15",
+                        "background-card": "#1e1b2e",
+                        "background-sidebar": "#161321",
+                        "border-dark": "#2d2a42",
+                        "text-primary": "#f3f4f6",
+                        "text-secondary": "#9ca3af",
+                        "text-muted": "#6b7280",
                         background: {
-                            light: '#f6f5f8',
-                            dark: '#151022',
+                            light: "#f6f5f8",
+                            dark: "#151022",
                         },
                     },
                     fontFamily: {
-                        display: ['Inter', 'Inter Variable', 'system-ui', '-apple-system', 'sans-serif'],
+                        display: ["Inter", "Inter Variable", "system-ui", "-apple-system", "sans-serif"],
                     },
                     borderRadius: {
-                        lg: '1rem',
-                        xl: '1.5rem',
+                        DEFAULT: "0.5rem",
+                        lg: "1rem",
+                        xl: "1.5rem",
+                        full: "9999px",
+                    },
+                    boxShadow: {
+                        glow: "0 0 15px -3px rgba(139, 92, 246, 0.3)",
                     },
                 },
             },
@@ -39,11 +54,25 @@
     </script>
     <style>
         body {
-            background-color: #151022;
+            background-color: #0f0b15;
             background-image:
                 radial-gradient(circle at 50% 0%, rgba(137, 90, 246, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 0% 100%, rgba(137, 90, 246, 0.05) 0%, transparent 40%);
             min-height: 100vh;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .glass-header {
+            background: rgba(22, 19, 33, 0.85);
+            backdrop-filter: blur(12px);
+        }
+
+        .glass-card {
+            background: rgba(30, 27, 46, 0.6);
+            backdrop-filter: blur(8px);
         }
 
         .stardust {
@@ -54,7 +83,9 @@
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+<body
+    class="bg-background-main text-text-primary font-display antialiased h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-white">
+    {% include "partials/header.html" %}
     {% block content %}{% endblock %}
     {% block extra_scripts %}{% endblock %}
 </body>
