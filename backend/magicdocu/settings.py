@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'core',
+    'django_elasticsearch_dsl'
 ]
 
 AUTH_USER_MODEL = 'users.AuthUser'
@@ -133,6 +134,9 @@ CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 
 ELASTICSEARCH_DSL = {  
     'default': {    
-        'hosts': os.environ.get("ELASTIC_URL")
+        'hosts': os.environ.get("ELASTIC_URL"),
+        'http_auth': ("elastic", os.environ.get("ELASTIC_PASSWORD")),
+        'verify_certs': False,
+        'ca_certs': None
     },
 }

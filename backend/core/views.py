@@ -5,6 +5,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from core.forms import UploadFileForm
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .elastic import ElasticDoc
+
 
 def index(request):
     return render(request, "index.html")
@@ -44,3 +47,15 @@ def upload_file(request):
     else:
         form = UploadFileForm()
     return render(request, "upload.html", {"form": form, "file_meta": file_meta})
+
+def search(request):
+    query = request.GET.get('q')
+    if query:
+        docs = ElasticDoc.search().query("match", description=query)
+    
+    else:
+        docs = ElasticDoc.search()
+
+    docs.to_queryset()
+    breakpoint()
+    return render(request, 'search_result.html', {'docs': docs})

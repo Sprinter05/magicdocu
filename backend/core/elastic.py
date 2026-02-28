@@ -3,13 +3,19 @@ from django_elasticsearch_dsl.registries import registry
 from .models import Document
 
 @registry.register_document
-class BookDocument(elastic_dsl.Document):
+class ElasticDoc(elastic_dsl.Document):
     class Index:
         name = 'document'
     
     class Django:    
         model = Document
     fields = [
-        'title',
+        'file',
+        'author',
+        'filetype',
+        'modified_date',
+        'created_date',
+        'accessed_date',
+        'size',
         'summary',       
     ]
