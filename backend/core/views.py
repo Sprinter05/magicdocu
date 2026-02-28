@@ -202,16 +202,15 @@ def chat_api(request):
         "message": assistant_content,
     })
 
-def search_view(request)
+def search_view(request):
     query = request.GET.get("q", "").strip()
 
     if not query:
         return render(request, "search.html", {"query": query, "results": []})
-    results = []
 
     result = search_by_text(query)
 
-    return JsonResponse({"result": [(doc.file.path) for doc in result]}, status=202)
+    return JsonResponse({"result": [(doc.id) for doc in result]}, status=202)
 
 @login_required
 def document_view(request):
