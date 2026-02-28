@@ -16,7 +16,7 @@ from pgvector.django import CosineDistance
 
 from core.forms import UploadFileForm
 from core.models import ChatMessage, ChatSession, Document, DocumentChunk
-from core.tasks import process_document_embeddings
+from core.tasks import process_document_embeddings, search_by_embeddings
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ def index(request):
 
 @login_required
 def dashboard(request):
+    docs = search_by_embeddings.delay("prescripciones")
     documents = Document.objects.filter(
         Q(author=request.user) | Q(shared_users=request.user)
     ).distinct()

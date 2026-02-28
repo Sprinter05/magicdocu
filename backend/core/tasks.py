@@ -4,6 +4,7 @@ import fitz  # PyMuPDF
 import ollama
 from celery import shared_task
 from django.conf import settings
+from pgvector.django import CosineDistance
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,42 @@ def _embed_texts(texts: list[str]) -> list[list[float]]:
 # ---------------------------------------------------------------------------
 # Celery task
 # ---------------------------------------------------------------------------
+
+# @shared_task(bind=True, max_retries=3, default_retry_delay=30)
+# def process_document_keywords(self, document_id: int):
+#     base = f"Only output in your following prompt a comma separated list of keywords for the following text, up to a max of 10 keywords: "
+
+#         keywords = ollama.chat(
+#             model="llama3.2:1b",
+#             messages=[{"role": "user", "content": f"{base} {query}"}],
+#         )
+
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def search_by_embeddings(self, text: str):
+    from core.models import Document, DocumentChunk  # local import to avoid circular
+    texts = text.split(",")
+    
+    try:
+        embeddings = _embed_texts(texts)
+    except Exception as exc:
+        logger.exception("Embedding generation failed for search %s", text)
+        raise self.retry(exc=exc)
+    
+    objs = DocumentChunk.objects.none()
+    for idx, (chunk_text, embedding) in enumerate(zip(texts, embeddings)):
+        obj = (
+            DocumentChunk.objects.annotate(
+                distance=CosineDistance("embedding", embedding)
+            )
+            .filter(distance__lte=0.5)
+            .order_by("distance")
+        )
+        objs |= obj
+
+    docs = Document.objects.all().filter(id__in=objs.values_list("document_id"))
+    return docs
+
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
 def process_document_embeddings(self, document_id: int):
