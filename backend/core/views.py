@@ -61,10 +61,9 @@ def upload_file(request):
         if form.is_valid():
             doc = form.save()
             # Trigger async embedding generation for PDFs
-            if doc.filetype and "pdf" in doc.filetype.lower():
-                get_document_summary.delay(doc.id)
-                process_document_embeddings.delay(doc.id)
-                process_document_keywords.delay(doc.id)
+            get_document_summary.delay(doc.id)
+            process_document_embeddings.delay(doc.id)
+            process_document_keywords.delay(doc.id)
             # If the client expects JSON (fetch/AJAX), return the new document id so frontend can poll /upload/status/<id>
             return JsonResponse({'id': doc.id}, status=201)
     else:

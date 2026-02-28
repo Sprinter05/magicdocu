@@ -124,8 +124,7 @@
                     class="dropzone cursor-pointer border-2 border-dashed border-primary/30 rounded-3xl p-12 bg-primary/5 backdrop-blur-sm relative group transition-all hover:bg-primary/10 hover:border-primary/60 flex flex-col items-center justify-center text-center"
                     action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input id="file-input" name="file" type="file" class="sr-only" multiple
-                        accept="application/pdf,image/*" aria-label="File upload input" />
+                    <input id="file-input" name="file" type="file" class="sr-only" multiple aria-label="File upload input" />
                     <div
                         class="absolute inset-0 rounded-3xl opacity-20 pointer-events-none bg-gradient-to-t from-primary/20 to-transparent">
                     </div>
