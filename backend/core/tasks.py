@@ -64,8 +64,7 @@ def get_document_summary(self, document_id: int):
     text = convert_to_md(document.file.name)
 
     if not text:
-        document.summary = "No summary could be obtained"
-        document.save()
+        Document.objects.filter(pk=document_id).update(summary="No text could be extracted from the document", summarised=True)
         return
 
     base = f"Only output in your following prompt a summary of the following text, up to a max of 30 words: "
@@ -75,8 +74,10 @@ def get_document_summary(self, document_id: int):
     )
 
     summary = (json.loads(response.model_dump_json())["message"]["content"])
+
     document.summary = summary
-    document.save()
+    document.summarised = True
+    document.save(update_fields=["summary", "summarised"])
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
@@ -107,6 +108,7 @@ def process_document_keywords(self, document_id: int):
         )
         key.save()
         document.keywords.add(key)
+
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
