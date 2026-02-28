@@ -199,3 +199,9 @@ def chat_api(request):
         "message": assistant_content,
     })
 
+@login_required
+def document_view(request):
+    context = {
+        "documents": Document.objects.all()
+    }
+    return render(request, "documents.html", context)
