@@ -110,8 +110,8 @@ def process_document_keywords(self, document_id: int):
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
-def search_by_embeddings(self, text: str):
-    from core.models import Document, DocumentChunk  # local import to avoid circular
+def search_by_text(self, text: str):
+    from core.models import Document, Keyword  # local import to avoid circular
     texts = text.split(",")
     
     try:
@@ -120,10 +120,10 @@ def search_by_embeddings(self, text: str):
         logger.exception("Embedding generation failed for search %s", text)
         raise self.retry(exc=exc)
     
-    objs = DocumentChunk.objects.none()
+    objs = Keyword.objects.none()
     for idx, (chunk_text, embedding) in enumerate(zip(texts, embeddings)):
         obj = (
-            DocumentChunk.objects.annotate(
+            Keyword.objects.annotate(
                 distance=CosineDistance("embedding", embedding)
             )
             .filter(distance__lte=0.5)

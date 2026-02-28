@@ -215,6 +215,6 @@ def search_view(request):
         return render(request, "search.html", {"query": query, "results": []})
     results = []
 
-    result = search_by_embeddings(query)
+    result = search_by_text(query)
 
     return JsonResponse({"result": [(doc.file.path) for doc in result]}, status=202)
