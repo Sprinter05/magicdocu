@@ -2,7 +2,7 @@ import mimetypes
 import os
 from django.utils import timezone
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from core.forms import UploadFileForm
 from django.contrib.auth.decorators import login_required
 
@@ -40,7 +40,6 @@ def upload_file(request):
             form.instance.author = request.user
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("/success/url/")
+            return redirect("/")
     else:
         form = UploadFileForm()
-    return render(request, "upload.html", {"form": form, "file_meta": file_meta})
