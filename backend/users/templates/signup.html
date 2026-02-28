@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}MagicDocu | Crear cuenta{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-10 bg-background-light/60 dark:bg-background-dark/60">
+    <div
+        class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_25%,rgba(137,90,246,0.12),transparent_35%),radial-gradient(circle_at_85%_10%,rgba(64,192,255,0.12),transparent_30%),radial-gradient(circle_at_60%_80%,rgba(255,255,255,0.05),transparent_35%)]">
+    </div>
+    <div
+        class="w-full max-w-md bg-background-light/80 dark:bg-background-dark/70 border border-primary/15 backdrop-blur-xl rounded-3xl shadow-2xl shadow-primary/10 p-8 space-y-6">
+        <div class="flex items-center gap-3">
+            <div class="h-11 w-11 rounded-2xl bg-primary/15 text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined">auto_fix_high</span>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-[0.2em] text-primary font-semibold">MagicDocu</p>
+                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Crear cuenta</h1>
+            </div>
+        </div>
+
+        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Sube, clasifica y busca documentos con
+            metadatos y OCR inteligente. Configura tu espacio en segundos.</p>
+        {% if form.errors %}
+        <div class="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-xs space-y-1">
+            {% for field in form %}
+            {% for error in field.errors %}
+            <p><strong>{{ field.label }}:</strong> {{ error }}</p>
+            {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-200">Nombre de usuario</label>
+                <input type="text" name="username" required placeholder="tu_usuario"
+                    class="w-full rounded-xl border border-primary/20 bg-white/70 dark:bg-background-dark/60 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-200">Correo electrónico</label>
+                <input type="email" name="email" required placeholder="tu@email.com"
+                    class="w-full rounded-xl border border-primary/20 bg-white/70 dark:bg-background-dark/60 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-200">Contraseña</label>
+                <input type="password" name="password1" required placeholder="••••••••"
+                    class="w-full rounded-xl border border-primary/20 bg-white/70 dark:bg-background-dark/60 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-200">Confirmar contraseña</label>
+                <input type="password" name="password2" required placeholder="••••••••"
+                    class="w-full rounded-xl border border-primary/20 bg-white/70 dark:bg-background-dark/60 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+            <div class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+                <input id="terms" type="checkbox"
+                    class="mt-1 h-4 w-4 rounded border-primary/30 text-primary focus:ring-primary" required />
+                <label for="terms">Acepto los términos, privacidad y el procesamiento OCR de mis documentos.</label>
+            </div>
+            <button type="submit"
+                class="w-full bg-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-colors">Crear
+                cuenta</button>
+        </form>
+
+        <p class="text-sm text-slate-500 dark:text-slate-400 text-center">¿Ya tienes cuenta? <a href="/login"
+                class="text-primary font-semibold hover:underline">Iniciar sesión</a></p>
+    </div>
+</div>
+{% endblock %}
