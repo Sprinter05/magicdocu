@@ -153,6 +153,45 @@
                 Chat with Document
             </a>
         </div>
+        <div class="p-6 border-b border-dark-border space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-white text-lg font-bold">Tags</h3>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                {% for tag in document.tags %}
+                <span
+                    class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-semibold bg-dark-bg/70 border border-dark-border text-dark-text">
+                    <span class="inline-block size-2 rounded-full" style="background-color: {{ tag.color }};"></span>
+                    {{ tag.name }}
+                </span>
+                {% empty %}
+                <p class="text-xs text-dark-text-muted">No tags yet.</p>
+                {% endfor %}
+            </div>
+            <form method="post" action="{% url 'document_assign_tags' document.id %}" class="space-y-3">
+                {% csrf_token %}
+                <label class="block text-xs font-semibold uppercase tracking-wide text-dark-text-muted">Assign
+                    tags</label>
+                <div class="max-h-36 overflow-y-auto pr-1 space-y-2">
+                    {% for tag in all_tags %}
+                    <label class="flex items-center gap-2 text-sm text-dark-text">
+                        <input type="checkbox" name="tag_ids" value="{{ tag.id }}"
+                            class="peer appearance-none size-4 border-2 border-dark-border rounded bg-transparent checked:bg-primary checked:border-primary transition-colors"
+                            {% if tag.id in document.tag_ids %}checked{% endif %} />
+                        <span class="inline-block size-2 rounded-full"
+                            style="background-color: {{ tag.color }};"></span>
+                        <span>{{ tag.name }}</span>
+                    </label>
+                    {% empty %}
+                    <p class="text-xs text-dark-text-muted">No tags created yet.</p>
+                    {% endfor %}
+                </div>
+                <button type="submit"
+                    class="h-10 px-4 rounded-xl bg-primary text-white hover:bg-primary-hover text-sm font-semibold transition-all">
+                    Save tags
+                </button>
+            </form>
+        </div>
         <div class="flex flex-col flex-1 p-6 min-h-0 bg-dark-bg/30">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-white text-lg font-bold">AI summary</h3>

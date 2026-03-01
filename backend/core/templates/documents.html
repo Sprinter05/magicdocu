@@ -96,9 +96,13 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-3">
-                    <div class="flex items-center justify-between group cursor-pointer">
-                        <span
-                            class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Tags</span>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-semibold text-text-primary">Tags</span>
+                        <button type="button" id="open-tag-modal"
+                            class="flex items-center justify-center size-7 rounded-lg border border-border-dark text-text-secondary hover:text-primary hover:border-primary/60 transition-colors"
+                            title="Add tag">
+                            <span class="material-symbols-outlined text-[16px]">add</span>
+                        </button>
                     </div>
                     <div class="flex flex-col gap-2">
                         <label class="flex items-center gap-3 cursor-pointer group">
@@ -117,28 +121,77 @@
                             </div>
                         </label>
                         {% for tag in all_tags %}
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative flex items-center">
-                                <input name="tag" value="{{ tag.name }}"
-                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                    type="checkbox" />
-                                <span
-                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.6)]">
+                        <div class="flex items-center justify-between gap-2">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative flex items-center">
+                                    <input name="tag" value="{{ tag.name }}"
+                                        class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                        type="checkbox" />
+                                    <span
+                                        class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                                 </div>
-                                <span
-                                    class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">{{
-                                    tag.name }}</span>
-                            </div>
-                        </label>
+                                <div class="flex items-center gap-2">
+                                    <div class="size-2 rounded-full shadow-[0_0_8px_rgba(148,163,184,0.6)]"
+                                        style="background-color: {{ tag.color }};">
+                                    </div>
+                                    <span
+                                        class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
+                                        {{ tag.name }}</span>
+                                </div>
+                            </label>
+                            <form method="post" action="{% url 'tags_delete' tag.id %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    class="flex items-center justify-center size-6 rounded-md text-text-secondary hover:text-red-400 hover:bg-white/5 transition-colors"
+                                    title="Delete tag">
+                                    <span class="material-symbols-outlined text-[16px]">remove</span>
+                                </button>
+                            </form>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </aside>
+    <div id="tag-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="w-full max-w-sm rounded-2xl border border-border-dark bg-background-card p-6 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-text-primary">Create tag</h3>
+                <button type="button" id="close-tag-modal"
+                    class="rounded-lg p-1 text-text-secondary hover:text-primary hover:bg-white/5">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+            <form method="post" action="{% url 'tags_add' %}" class="mt-5 space-y-4">
+                {% csrf_token %}
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold uppercase tracking-wide text-text-secondary">Name</label>
+                    <input type="text" name="tag_name" placeholder="Tag name"
+                        class="w-full h-11 rounded-xl bg-white/5 border border-border-dark px-3 text-sm text-text-primary placeholder:text-text-secondary focus:border-primary focus:ring-1 focus:ring-primary"
+                        required />
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold uppercase tracking-wide text-text-secondary">Color</label>
+                    <div class="flex items-center gap-3">
+                        <input type="color" name="tag_color" value="#94a3b8"
+                            class="h-11 w-14 rounded-lg border border-border-dark bg-white/5" />
+                        <span class="text-xs text-text-secondary">Pick a color</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-2">
+                    <button type="button" id="cancel-tag-modal"
+                        class="h-10 px-4 rounded-xl border border-border-dark text-text-secondary hover:text-text-primary hover:border-primary/60 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="h-10 px-4 rounded-xl bg-primary text-white hover:bg-primary/90 transition-colors font-semibold">
+                        Create
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <main class="flex-1 overflow-y-auto bg-background-main p-8">
         <div class="max-w-[1600px] mx-auto">
             <div class="flex flex-col gap-6 mb-8">
@@ -283,9 +336,26 @@
         var filetypeInputs = document.querySelectorAll('input[name="filetype"]');
         var tagInputs = document.querySelectorAll('input[name="tag"]');
         var container = document.getElementById('documents-container');
+        var tagModal = document.getElementById('tag-modal');
+        var openTagModal = document.getElementById('open-tag-modal');
+        var closeTagModal = document.getElementById('close-tag-modal');
+        var cancelTagModal = document.getElementById('cancel-tag-modal');
 
         if (!dateInputs.length || !container) {
             return;
+        }
+
+        function toggleTagModal(show) {
+            if (!tagModal) {
+                return;
+            }
+            if (show) {
+                tagModal.classList.remove('hidden');
+                tagModal.classList.add('flex');
+            } else {
+                tagModal.classList.add('hidden');
+                tagModal.classList.remove('flex');
+            }
         }
 
         function buildUrl() {
@@ -502,6 +572,32 @@
 
         updateFiletypeStyles();
         updateActiveFilters();
+
+        if (openTagModal) {
+            openTagModal.addEventListener('click', function () {
+                toggleTagModal(true);
+            });
+        }
+
+        if (closeTagModal) {
+            closeTagModal.addEventListener('click', function () {
+                toggleTagModal(false);
+            });
+        }
+
+        if (cancelTagModal) {
+            cancelTagModal.addEventListener('click', function () {
+                toggleTagModal(false);
+            });
+        }
+
+        if (tagModal) {
+            tagModal.addEventListener('click', function (event) {
+                if (event.target === tagModal) {
+                    toggleTagModal(false);
+                }
+            });
+        }
     })();
 </script>
 {% endblock %}

@@ -2,20 +2,30 @@ import csv
 import io
 import mimetypes
 import os
+import re
 from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse, FileResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from core.forms import UploadFileForm
-from core.models import ChatMessage, ChatSession, Document, DocumentChunk
+from core.models import ChatMessage, ChatSession, Document, DocumentChunk, Tag
 from core.tasks import *
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_TAG_COLOR = "#94a3b8"
+HEX_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
+
+
+def _normalize_tag_color(value: str) -> str:
+    if value and HEX_COLOR_RE.match(value):
+        return value.lower()
+    return DEFAULT_TAG_COLOR
 
 
 def index(request):
@@ -219,7 +229,7 @@ def document_view(request):
     document_tags = []
     documents = []
     all_extensions = []
-    all_tags = []
+    all_tags = Tag.objects.all().order_by("name")
     all_documents = Document.objects.all()
 
     downfile = request.GET.get("download")
@@ -233,9 +243,17 @@ def document_view(request):
     filtered_documents = all_documents
     tag_filter = request.GET.get("tags")
     if tag_filter:
-        tag_filter = tag_filter.strip().split(",")
+        tag_filter = [tag.strip() for tag in tag_filter.split(",") if tag.strip()]
+        tag_names = [tag for tag in tag_filter if tag.lower() != "untagged"]
 
-        filtered_documents = all_documents.filter(tags__name__in=tag_filter)
+        tag_query = Q()
+        if tag_names:
+            tag_query |= Q(tags__name__in=tag_names)
+        if any(tag.lower() == "untagged" for tag in tag_filter):
+            tag_query |= Q(tags__isnull=True)
+
+        if tag_query:
+            filtered_documents = filtered_documents.filter(tag_query).distinct()
 
     filetype_param = request.GET.get("filetype")
     if filetype_param:
@@ -267,9 +285,6 @@ def document_view(request):
             all_extensions.append(extension)
 
         document_tags = document.tags.all()
-        for tag in document_tags:
-            if tag not in all_tags:
-                all_tags.append(tag)
 
         documents.append({
             "id": document.pk,
@@ -287,7 +302,7 @@ def document_view(request):
     context = {
         "documents": documents,
         "all_extensions": all_extensions,
-        "all_tags": document_tags
+        "all_tags": all_tags
     }
     return render(request, "documents.html", context)
 
@@ -297,6 +312,7 @@ def document_detail(request, id):
     file_name = document.file.name.split("/")[-1]
     extension = file_name.split(".")[-1].upper()
     document_tags = document.tags.all()
+    all_tags = Tag.objects.all().order_by("name")
 
     doc_data = {
         "id": document.pk,
@@ -310,9 +326,64 @@ def document_detail(request, id):
         "accessed_date": document.accessed_date,
         "size": round(document.size / 1048576, 2),
         "tags": document_tags,
+        "tag_ids": list(document_tags.values_list("id", flat=True)),
         "shared_users": document.shared_users,
     }
-    return render(request, "document_detail.html", {"document": doc_data})
+    return render(request, "document_detail.html", {"document": doc_data, "all_tags": all_tags})
+
+
+@login_required
+@require_POST
+def document_assign_tags(request, id):
+    document = _get_accessible_document(request.user, id)
+    tag_ids = request.POST.getlist("tag_ids")
+    tags = Tag.objects.filter(id__in=tag_ids)
+    document.tags.set(tags)
+
+    return redirect("document_detail", id=id)
+
+
+@login_required
+@require_POST
+def document_add_tag(request, id):
+    document = _get_accessible_document(request.user, id)
+    tag_name = request.POST.get("tag_name", "").strip()
+    if not tag_name:
+        return redirect("document_detail", id=id)
+
+    cleaned_name = " ".join(tag_name.split())
+    tag_color = _normalize_tag_color(request.POST.get("tag_color", "").strip())
+
+    tag = Tag.objects.filter(name__iexact=cleaned_name).first()
+    if not tag:
+        tag = Tag.objects.create(name=cleaned_name, color=tag_color)
+    document.tags.add(tag)
+
+    return redirect("document_detail", id=id)
+
+
+@login_required
+@require_POST
+def tags_add(request):
+    tag_name = request.POST.get("tag_name", "").strip()
+    if not tag_name:
+        return redirect("documents")
+
+    cleaned_name = " ".join(tag_name.split())
+    tag_color = _normalize_tag_color(request.POST.get("tag_color", "").strip())
+
+    tag = Tag.objects.filter(name__iexact=cleaned_name).first()
+    if not tag:
+        Tag.objects.create(name=cleaned_name, color=tag_color)
+
+    return redirect("documents")
+
+
+@login_required
+@require_POST
+def tags_delete(request, tag_id):
+    Tag.objects.filter(id=tag_id).delete()
+    return redirect("documents")
 
 
 @login_required
