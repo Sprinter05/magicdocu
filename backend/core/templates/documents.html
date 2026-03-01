@@ -14,7 +14,7 @@
                 class="text-xs font-medium text-secondary-accent hover:text-secondary-accent/80 transition-colors">Reset
                 All</button>
         </div>
-        <div class="space-y-1 mb-8">
+        <div class="space-y-1 mb-2">
             <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary font-medium border border-primary/20"
                 href="#">
                 <span class="material-symbols-outlined">grid_view</span>
@@ -37,152 +37,105 @@
             </a>
         </div>
         <div class="h-px bg-border-dark my-2 mx-2"></div>
-        <div class="flex flex-col gap-6 mt-6 px-2">
+        <div class="flex flex-col gap-6 mt-2 px-2">
             <div class="flex flex-col gap-3">
-                <div class="flex items-center justify-between group cursor-pointer">
+                <div class="flex flex-col gap-2 group cursor-pointer">
                     <span
                         class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Date
                         Modified</span>
-                <div class="flex flex-col gap-2">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative flex items-center">
-                            
-                            <form id="download-form" method="get" action="{% url 'documents' %}">
-                                <input 
-                                    type="checkbox" 
-                                    name="date_filter" 
-                                    value="today"
-                                    onchange="this.form.submit()"
-                                    {% if request.GET.down == 'load' %}checked{% endif %}
-                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                />
-                            </form>
+                    <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" name="date_filter" value="today"
+                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors" />
+                                <span
+                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                            </div>
                             <span
-                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                        </div>
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Today</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" name="date_filter" value="7"
+                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors" />
+                                <span
+                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                            </div>
+                            <span
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
+                                7 Days</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" name="date_filter" value="30"
+                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors" />
+                                <span
+                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
+                            </div>
+                            <span
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
+                                30 Days</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between group cursor-pointer">
                         <span
-                            class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Today</span>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative flex items-center">
-                            <form id="download-form" method="get" action="{% url 'documents' %}">
-                                <input 
-                                    type="checkbox" 
-                                    name="date_filter" 
-                                    value="7" 
+                            class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">File
+                            Type</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        {% for ext in all_extensions %}
+                        <label class="cursor-pointer">
+                            <input type="checkbox" name="filetype" value="{{ ext }}" class="sr-only" />
+                            <span
+                                class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors inline-block">
+                                {{ ext|upper }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between group cursor-pointer">
+                        <span
+                            class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Tags</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input name="tag" value="Untagged"
                                     class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                    onchange="this.form.submit()"
-                                    {% if request.GET.down == 'load' %}checked{% endif %}
-                                />
-                            </form>
-                            <span
-                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                        </div>
-                        <span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
-                            7 Days</span>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        
-                        <form id="download-form" method="get" action="{% url 'documents' %}">
-                            <input 
-                                type="checkbox" 
-                                name="date_filter" 
-                                value="30" 
-                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                onchange="this.form.submit()"
-                                {% if request.GET.down == 'load' %}checked{% endif %}
-                            />
-                        </form>
-                        <span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
-                            30 Days</span>
-                    </label>
-                </div>
-            </div>
-            <div class="flex flex-col gap-3">
-                <div class="flex items-center justify-between group cursor-pointer">
-                    <span
-                        class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">File
-                        Type</span>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <button
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-white border border-primary shadow-[0_0_10px_rgba(139,92,246,0.4)]">PDF</button>
-                    <button
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">DOCX</button>
-                    <button
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">XLSX</button>
-                    <button
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-text-secondary border border-border-dark hover:border-primary/50 hover:text-white transition-colors">IMG</button>
-                </div>
-            </div>
-            <div class="flex flex-col gap-3">
-                <div class="flex items-center justify-between group cursor-pointer">
-                    <span
-                        class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Tags</span>
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative flex items-center">
-                            <input checked=""
-                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
-                            <span
-                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="size-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.6)]">
+                                    type="checkbox" />
+                                <span
+                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                             </div>
-                            <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Finance</span>
-                        </div>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative flex items-center">
-                            <input
-                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
-                            <span
-                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="size-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.6)]">
+                            <div class="flex items-center gap-2">
+                                <div class="size-2 rounded-full bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.6)]">
+                                </div>
+                                <span
+                                    class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Untagged</span>
                             </div>
-                            <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Legal</span>
-                        </div>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative flex items-center">
-                            <input
-                                class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
-                                type="checkbox" />
-                            <span
-                                class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="size-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)]">
+                        </label>
+                        {% for tag in all_tags %}
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input name="tag" value="{{ tag.name }}"
+                                    class="peer appearance-none size-4 border-2 border-text-secondary rounded bg-transparent checked:bg-secondary-accent checked:border-secondary-accent transition-colors"
+                                    type="checkbox" />
+                                <span
+                                    class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                             </div>
-                            <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">HR</span>
-                        </div>
-                    </label>
+                            <div class="flex items-center gap-2">
+                                <div class="size-2 rounded-full bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.6)]">
+                                </div>
+                                <span
+                                    class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">{{
+                                    tag.name }}</span>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="mt-auto pt-6 px-2">
-            <div class="bg-white/5 rounded-xl p-4 border border-border-dark">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold text-text-primary">Storage Used</span>
-                    <span class="text-xs text-text-secondary">75%</span>
-                </div>
-                <div class="w-full bg-black/20 rounded-full h-2 mb-2 border border-white/5">
-                    <div class="bg-gradient-to-r from-primary to-secondary-accent h-full rounded-full shadow-[0_0_10px_rgba(139,92,246,0.3)]"
-                        style="width: 75%"></div>
-                </div>
-                <p class="text-[10px] text-text-secondary">15.2 GB of 20 GB used</p>
-                <button
-                    class="w-full mt-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/10 hover:border-primary/50 transition-colors">Upgrade
-                    Plan</button>
             </div>
         </div>
     </aside>
@@ -207,8 +160,8 @@
                     <div
                         class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
                         <span class="text-xs font-semibold text-secondary-accent">Type:</span>
-                        <span>PDF</span>
-                        <button
+                        <span id="active-filetypes">PDF</span>
+                        <button type="button" data-filter="filetype"
                             class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
                             <span class="material-symbols-outlined text-[14px]">close</span>
                         </button>
@@ -216,8 +169,8 @@
                     <div
                         class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
                         <span class="text-xs font-semibold text-secondary-accent">Time:</span>
-                        <span>Last 7 Days</span>
-                        <button
+                        <span id="active-date">Last 7 Days</span>
+                        <button type="button" data-filter="date"
                             class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
                             <span class="material-symbols-outlined text-[14px]">close</span>
                         </button>
@@ -226,140 +179,329 @@
                         class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
                         <span class="text-xs font-semibold text-secondary-accent">Tag:</span>
                         <div class="size-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]"></div>
-                        <span>Finance</span>
-                        <button
+                        <span id="active-tags">Finance</span>
+                        <button type="button" data-filter="tag"
                             class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
                             <span class="material-symbols-outlined text-[14px]">close</span>
                         </button>
                     </div>
-                    <button
+                    <button type="button" data-action="clear-all"
                         class="text-xs font-medium text-text-secondary hover:text-primary ml-2 underline decoration-dashed transition-colors">Clear
                         All</button>
                 </div>
             </div>
-            <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
-                {% for document in documents %}
-                <a href="{% url 'document_detail' document.id %}"
-                    class="group flex flex-col bg-background-card rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer h-full">
-                    <div class="relative w-full aspect-[4/5] overflow-hidden">
-                        {% if document.filetype == "pdf" %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-950/30 via-red-900/20 to-red-950/30 transition-all duration-500 group-hover:from-red-900/40 group-hover:via-red-800/30 group-hover:to-red-900/40">
-                            <span class="material-symbols-outlined text-red-400/70 group-hover:text-red-400 transition-colors drop-shadow-[0_0_15px_rgba(248,113,113,0.3)]" style="font-size: 120px;">picture_as_pdf</span>
-                        </div>
-                        {% elif document.filetype == "docx" %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-950/30 via-blue-900/20 to-blue-950/30 transition-all duration-500 group-hover:from-blue-900/40 group-hover:via-blue-800/30 group-hover:to-blue-900/40">
-                            <span class="material-symbols-outlined text-blue-400/70 group-hover:text-blue-400 transition-colors drop-shadow-[0_0_15px_rgba(96,165,250,0.3)]" style="font-size: 120px;">description</span>
-                        </div>
-                        {% elif document.filetype == "xlsx" %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-950/30 via-green-900/20 to-green-950/30 transition-all duration-500 group-hover:from-green-900/40 group-hover:via-green-800/30 group-hover:to-green-900/40">
-                            <span class="material-symbols-outlined text-green-400/70 group-hover:text-green-400 transition-colors drop-shadow-[0_0_15px_rgba(74,222,128,0.3)]" style="font-size: 120px;">table_view</span>
-                        </div>
-                        {% elif document.filetype == "pptx" %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-950/30 via-orange-900/20 to-orange-950/30 transition-all duration-500 group-hover:from-orange-900/40 group-hover:via-orange-800/30 group-hover:to-orange-900/40">
-                            <span class="material-symbols-outlined text-orange-400/70 group-hover:text-orange-400 transition-colors drop-shadow-[0_0_15px_rgba(251,146,60,0.3)]" style="font-size: 120px;">slideshow</span>
-                        </div>
-                        {% elif document.filetype == "txt" %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-950/30 via-gray-900/20 to-gray-950/30 transition-all duration-500 group-hover:from-gray-900/40 group-hover:via-gray-800/30 group-hover:to-gray-900/40">
-                            <span class="material-symbols-outlined text-gray-400/70 group-hover:text-gray-400 transition-colors drop-shadow-[0_0_15px_rgba(156,163,175,0.3)]" style="font-size: 120px;">text_snippet</span>
-                        </div>
-                        {% elif document.filetype == "csv" %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-950/30 via-teal-900/20 to-teal-950/30 transition-all duration-500 group-hover:from-teal-900/40 group-hover:via-teal-800/30 group-hover:to-teal-900/40">
-                            <span class="material-symbols-outlined text-teal-400/70 group-hover:text-teal-400 transition-colors drop-shadow-[0_0_15px_rgba(45,212,191,0.3)]" style="font-size: 120px;">table_chart</span>
-                        </div>
-                        {% elif document.filetype == "png" or document.filetype == "jpg" or document.filetype == "jpeg" %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-950/30 via-purple-900/20 to-purple-950/30 transition-all duration-500 group-hover:from-purple-900/40 group-hover:via-purple-800/30 group-hover:to-purple-900/40">
-                            <span class="material-symbols-outlined text-purple-400/70 group-hover:text-purple-400 transition-colors drop-shadow-[0_0_15px_rgba(192,132,252,0.3)]" style="font-size: 120px;">image</span>
-                        </div>
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-950/30 via-slate-900/20 to-slate-950/30 transition-all duration-500 group-hover:from-slate-900/40 group-hover:via-slate-800/30 group-hover:to-slate-900/40">
-                            <span class="material-symbols-outlined text-slate-400/70 group-hover:text-slate-400 transition-colors drop-shadow-[0_0_15px_rgba(148,163,184,0.3)]" style="font-size: 120px;">description</span>
-                        </div>
-                        {% endif %}
-                        <div
-                            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-start justify-end p-2 backdrop-blur-[2px]">
+            <div id="documents-container">
+                <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+                    {% for document in documents %}
+                    <a href="{% url 'document_detail' document.id %}"
+                        class="group flex flex-col bg-background-card rounded-xl overflow-hidden border border-border-dark hover:border-primary/50 shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer h-full">
+                        <div class="relative w-full aspect-[4/5] bg-[#12101a] overflow-hidden">
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                                data-alt="Document preview"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB4Oo5HA43sUdINalnEfrJ6HPCmcAxjM39zbXawzGcidkt02tPaGJnrhjEuGGRwa6xPq8-RH30onEDHqpFalkOr-fpGy1GK95TZ0DoaXPBeCbuQ_kLfaxgpUOCE-q-OxqHginjfvaH0j2jrHHbtuA0PCDYdfkuMdVqqZggZxe1JYl0H7ODwjOI0cI04mnbhIL4k6HwJND_Olm8sxDW9WUtgD7Wf020ZfmghBxwe6QCHknonChSkBE6slWRh3fJzm_emNyFA2RYc-_w');">
+                            </div>
                             <div
-                                class="bg-background-card/90 rounded-lg p-1 shadow-md flex flex-col gap-1 border border-white/10">
-                                <form method="get" action="{% url 'documents' %}">
-                                    <input type="hidden" name="download" value="uploads/{{ document.name }}">
-                                    <button
-                                        type="submit"
-                                        class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                        title="Download">
-                                        <span class="material-symbols-outlined">download</span>
-                                    </button>
-                                </form>
-
-                                </button>
-                                <button
-                                    class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                    title="Share">
-                                    <span class="material-symbols-outlined text-[18px]">share</span>
-                                </button>
-                                <form method="get" action="{% url 'documents' %}">
-                                    <input type="hidden" name="delete" value="uploads/{{ document.name }}">
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-start justify-end p-2 backdrop-blur-[2px]">
+                                <div
+                                    class="bg-background-card/90 rounded-lg p-1 shadow-md flex flex-col gap-1 border border-white/10">
+                                    <form method="get" action="{% url 'documents' %}">
+                                        <input type="hidden" name="download" value="uploads/{{ document.name }}">
+                                        <button type="submit"
+                                            class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
+                                            title="Download">
+                                            <span class="material-symbols-outlined">download</span>
+                                        </button>
+                                    </form>
                                     <button
                                         class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
-                                        title="Delete">
-                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        title="Share">
+                                        <span class="material-symbols-outlined text-[18px]">share</span>
                                     </button>
-                                </form>
-                               
+                                    <form method="get" action="{% url 'documents' %}">
+                                        <input type="hidden" name="delete" value="uploads/{{ document.name }}">
+                                        <button
+                                            class="p-1.5 hover:bg-white/10 rounded text-text-secondary hover:text-primary transition-colors"
+                                            title="Delete">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div
+                                class="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold border border-white/10 shadow-lg uppercase tracking-wider flex items-center gap-1">
+                                {% if document.filetype == "PDF" %}
+                                <span class="material-symbols-outlined text-[12px] text-red-400">picture_as_pdf</span>
+                                <span class="text-red-400">{{ document.filetype }}</span>
+                                {% elif document.filetype == "DOCX" %}
+                                <span class="material-symbols-outlined text-[12px] text-blue-400">description</span>
+                                <span class="text-blue-400">{{ document.filetype }}</span>
+                                {% elif document.filetype == "XLSX" %}
+                                <span class="material-symbols-outlined text-[12px] text-green-400">table_view</span>
+                                <span class="text-green-400">{{ document.filetype }}</span>
+                                {% elif document.filetype == "PPTX" %}
+                                <span class="material-symbols-outlined text-[12px] text-orange-400">slideshow</span>
+                                <span class="text-orange-400">{{ document.filetype }}</span>
+                                {% else %}
+                                <span
+                                    class="material-symbols-outlined text-[12px] text-text-secondary">insert_drive_file</span>
+                                <span class="text-text-secondary">{{ document.filetype|default:"FILE" }}</span>
+                                {% endif %}
                             </div>
                         </div>
-                        <div
-                            class="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold border border-white/10 shadow-lg uppercase tracking-wider flex items-center gap-1">
-                            {% if document.filetype == "PDF" %}
-                            <span class="material-symbols-outlined text-[12px] text-red-400">picture_as_pdf</span>
-                            <span class="text-red-400">{{ document.filetype }}</span>
-                            {% elif document.filetype == "DOCX" %}
-                            <span class="material-symbols-outlined text-[12px] text-blue-400">description</span>
-                            <span class="text-blue-400">{{ document.filetype }}</span>
-                            {% elif document.filetype == "XLSX" %}
-                            <span class="material-symbols-outlined text-[12px] text-green-400">table_view</span>
-                            <span class="text-green-400">{{ document.filetype }}</span>
-                            {% elif document.filetype == "PPTX" %}
-                            <span class="material-symbols-outlined text-[12px] text-orange-400">slideshow</span>
-                            <span class="text-orange-400">{{ document.filetype }}</span>
-                            {% else %}
-                            <span
-                                class="material-symbols-outlined text-[12px] text-text-secondary">insert_drive_file</span>
-                            <span class="text-text-secondary">{{ document.filetype|default:"FILE" }}</span>
-                            {% endif %}
+                        <div class="p-4 flex flex-col gap-1">
+                            <div class="flex items-start justify-between gap-2">
+                                <h4 class="text-sm font-semibold text-text-primary line-clamp-1 group-hover:text-primary transition-colors"
+                                    title="{{ document.name }}">{{ document.name }}</h4>
+                            </div>
+                            <div class="flex items-center gap-2 mt-1">
+                                {% for tag in document.tags.all %}
+                                {% if forloop.counter <= 2 %} <span
+                                    class="bg-white/5 border border-border-dark text-text-secondary text-[10px] font-medium px-2 py-0.5 rounded-full">
+                                    {{ tag.name }}</span>
+                                    {% endif %}
+                                    {% empty %}
+                                    <span
+                                        class="bg-white/5 border border-border-dark text-text-secondary text-[10px] font-medium px-2 py-0.5 rounded-full">Untagged</span>
+                                    {% endfor %}
+                                    <span class="text-xs text-text-secondary">{{ document.size }} MB</span>
+                            </div>
+                            <div class="mt-2 text-[10px] text-text-secondary flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">calendar_today</span>
+                                {{ document.modified_date|date:"M d, Y" }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="p-4 flex flex-col gap-1">
-                        <div class="flex items-start justify-between gap-2">
-                            <h4 class="text-sm font-semibold text-text-primary line-clamp-1 group-hover:text-primary transition-colors"
-                                title="{{ document.name }}">{{ document.name }}</h4>
-                        </div>
-                        <div class="flex items-center gap-2 mt-1">
-                            {% for tag in document.tags.all %}
-                            {% if forloop.counter <= 2 %} <span
-                                class="bg-white/5 border border-border-dark text-text-secondary text-[10px] font-medium px-2 py-0.5 rounded-full">
-                                {{ tag.name }}</span>
-                                {% endif %}
-                                {% empty %}
-                                <span
-                                    class="bg-white/5 border border-border-dark text-text-secondary text-[10px] font-medium px-2 py-0.5 rounded-full">Untagged</span>
-                                {% endfor %}
-                                <span class="text-xs text-text-secondary">{{ document.size }} MB</span>
-                        </div>
-                        <div class="mt-2 text-[10px] text-text-secondary flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[12px]">calendar_today</span>
-                            {{ document.modified_date|date:"M d, Y" }}
-                        </div>
-                    </div>
-                </a>
-                {% endfor %}
-            </div>
-            <div class="flex items-center justify-center mt-12 pb-8">
-                <button
-                    class="flex items-center gap-2 px-6 py-2.5 rounded-full border border-border-dark bg-background-card text-text-primary hover:bg-white/5 hover:border-primary/50 transition-all text-sm font-medium shadow-sm hover:shadow-[0_0_15px_rgba(139,92,246,0.2)]">
-                    <span>Load More Documents</span>
-                    <span class="material-symbols-outlined text-sm">expand_more</span>
-                </button>
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </main>
 </div>
+<script>
+    (function () {
+        var dateInputs = document.querySelectorAll('input[name="date_filter"]');
+        var filetypeInputs = document.querySelectorAll('input[name="filetype"]');
+        var tagInputs = document.querySelectorAll('input[name="tag"]');
+        var container = document.getElementById('documents-container');
+
+        if (!dateInputs.length || !container) {
+            return;
+        }
+
+        function buildUrl() {
+            var url = new URL(window.location.href);
+            var selectedDate = null;
+
+            dateInputs.forEach(function (input) {
+                if (input.checked) {
+                    selectedDate = input.value;
+                }
+            });
+
+            if (selectedDate) {
+                url.searchParams.set('date_filter', selectedDate);
+            } else {
+                url.searchParams.delete('date_filter');
+            }
+
+            url.searchParams.delete('filetype');
+            var selectedFiletypes = [];
+            filetypeInputs.forEach(function (input) {
+                if (input.checked) {
+                    selectedFiletypes.push(input.value);
+                }
+            });
+            if (selectedFiletypes.length) {
+                url.searchParams.set('filetype', selectedFiletypes.join(','));
+            }
+
+            url.searchParams.delete('tags');
+            var selectedTags = [];
+            tagInputs.forEach(function (input) {
+                if (input.checked) {
+                    selectedTags.push(input.value);
+                }
+            });
+            if (selectedTags.length) {
+                url.searchParams.set('tags', selectedTags.join(','));
+            }
+
+            return url;
+        }
+
+        function updateFiletypeStyles() {
+            filetypeInputs.forEach(function (input) {
+                var pill = input.nextElementSibling;
+                if (!pill) {
+                    return;
+                }
+                if (input.checked) {
+                    pill.classList.add('bg-primary', 'text-white', 'border-primary', 'shadow-[0_0_10px_rgba(139,92,246,0.4)]');
+                    pill.classList.remove('bg-white/5', 'text-text-secondary', 'border-border-dark');
+                } else {
+                    pill.classList.remove('bg-primary', 'text-white', 'border-primary', 'shadow-[0_0_10px_rgba(139,92,246,0.4)]');
+                    pill.classList.add('bg-white/5', 'text-text-secondary', 'border-border-dark');
+                }
+            });
+        }
+
+        function updateActiveFilters() {
+            var activeFiletypes = [];
+            var activeTags = [];
+            var filetypesLabel = document.getElementById('active-filetypes');
+            var tagsLabel = document.getElementById('active-tags');
+            var dateLabel = document.getElementById('active-date');
+            var selectedDate = null;
+            var dateText = 'All';
+
+            filetypeInputs.forEach(function (input) {
+                if (input.checked) {
+                    activeFiletypes.push(input.value);
+                }
+            });
+
+            tagInputs.forEach(function (input) {
+                if (input.checked) {
+                    activeTags.push(input.value);
+                }
+            });
+
+            dateInputs.forEach(function (input) {
+                if (input.checked) {
+                    selectedDate = input.value;
+                }
+            });
+
+            if (selectedDate === 'today') {
+                dateText = 'Today';
+            } else if (selectedDate === '7') {
+                dateText = 'Last 7 Days';
+            } else if (selectedDate === '30') {
+                dateText = 'Last 30 Days';
+            }
+
+            if (filetypesLabel) {
+                filetypesLabel.textContent = activeFiletypes.length ? activeFiletypes.join(', ') : 'All';
+            }
+
+            if (tagsLabel) {
+                tagsLabel.textContent = activeTags.length ? activeTags.join(', ') : 'All';
+            }
+
+            if (dateLabel) {
+                dateLabel.textContent = dateText;
+            }
+        }
+
+        function replaceContainer(htmlText) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(htmlText, 'text/html');
+            var nextContainer = doc.getElementById('documents-container');
+            if (nextContainer) {
+                container.innerHTML = nextContainer.innerHTML;
+            }
+        }
+
+        function applyFilters() {
+            var url = buildUrl();
+            var displayQuery = decodeURIComponent(url.searchParams.toString());
+            var displayUrl = displayQuery ? url.pathname + '?' + displayQuery : url.pathname;
+            history.replaceState({}, '', displayUrl);
+
+            fetch(url.toString(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Request failed');
+                    }
+                    return response.text();
+                })
+                .then(replaceContainer)
+                .catch(function () {
+                    window.location.href = url.toString();
+                });
+        }
+
+        function clearFilter(type) {
+            if (type === 'date') {
+                dateInputs.forEach(function (input) {
+                    input.checked = false;
+                });
+            }
+
+            if (type === 'filetype') {
+                filetypeInputs.forEach(function (input) {
+                    input.checked = false;
+                });
+                updateFiletypeStyles();
+            }
+
+            if (type === 'tag') {
+                tagInputs.forEach(function (input) {
+                    input.checked = false;
+                });
+            }
+
+            updateActiveFilters();
+            applyFilters();
+        }
+
+        dateInputs.forEach(function (input) {
+            input.addEventListener('change', function () {
+                dateInputs.forEach(function (other) {
+                    if (other !== input) {
+                        other.checked = false;
+                    }
+                });
+                applyFilters();
+            });
+        });
+
+        filetypeInputs.forEach(function (input) {
+            input.addEventListener('change', function () {
+                updateFiletypeStyles();
+                updateActiveFilters();
+                applyFilters();
+            });
+        });
+
+        tagInputs.forEach(function (input) {
+            input.addEventListener('change', function () {
+                updateActiveFilters();
+                applyFilters();
+            });
+        });
+
+        var clearButtons = document.querySelectorAll('[data-filter]');
+        clearButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                clearFilter(button.getAttribute('data-filter'));
+            });
+        });
+
+        var clearAllButton = document.querySelector('[data-action="clear-all"]');
+        if (clearAllButton) {
+            clearAllButton.addEventListener('click', function () {
+                dateInputs.forEach(function (input) {
+                    input.checked = false;
+                });
+                filetypeInputs.forEach(function (input) {
+                    input.checked = false;
+                });
+                tagInputs.forEach(function (input) {
+                    input.checked = false;
+                });
+                updateFiletypeStyles();
+                updateActiveFilters();
+                applyFilters();
+            });
+        }
+
+        updateFiletypeStyles();
+        updateActiveFilters();
+    })();
+</script>
 {% endblock %}
