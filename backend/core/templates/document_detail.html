@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>MagicDocu - Document Details (Dark Mode)</title>
+    <title>MagicDocu - Detalles de documento (Dark Mode)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
         rel="stylesheet" />
     <link
@@ -74,7 +74,7 @@
             <div class="px-8 py-4 flex items-center justify-between bg-dark-surface border-b border-dark-border">
                 <div class="flex items-center gap-2">
                     <a class="text-dark-text-muted hover:text-primary text-sm font-medium leading-normal"
-                        href="{% url 'documents' %}">Documents</a>
+                        href="{% url 'documents' %}">Documentos</a>
                     <span class="material-symbols-outlined text-dark-text-muted text-sm">chevron_right</span>
                     <span class="text-white text-sm font-semibold leading-normal">{{ document.name }}</span>
                 </div>
@@ -144,34 +144,34 @@
             class="flex flex-col w-[30%] bg-dark-surface h-[calc(100vh-64px)] overflow-y-auto border-l border-dark-border">
             <div class="p-6 border-b border-dark-border">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-white text-lg font-bold">Details</h3>
+                    <h3 class="text-white text-lg font-bold">Detalles</h3>
                 </div>
                 <div class="space-y-4">
                     <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
                         <div class="flex items-center gap-2 text-cyan-accent/70">
                             <span class="material-symbols-outlined text-[16px]">description</span>
-                            <span class="text-xs font-medium uppercase tracking-wide">File Name</span>
+                            <span class="text-xs font-medium uppercase tracking-wide">Nombre de archivo</span>
                         </div>
                         <span class="text-sm font-medium text-dark-text truncate">{{ document.name }}</span>
                     </div>
                     <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
                         <div class="flex items-center gap-2 text-cyan-accent/70">
                             <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                            <span class="text-xs font-medium uppercase tracking-wide">Uploaded</span>
+                            <span class="text-xs font-medium uppercase tracking-wide">Fecha de subida</span>
                         </div>
                         <span class="text-sm font-medium text-dark-text">{{ document.created_date }}</span>
                     </div>
                     <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
                         <div class="flex items-center gap-2 text-cyan-accent/70">
                             <span class="material-symbols-outlined text-[16px]">hard_drive</span>
-                            <span class="text-xs font-medium uppercase tracking-wide">Size</span>
+                            <span class="text-xs font-medium uppercase tracking-wide">Tamaño</span>
                         </div>
                         <span class="text-sm font-medium text-dark-text">{{ document.size }} MB</span>
                     </div>
                     <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
                         <div class="flex items-center gap-2 text-cyan-accent/70">
                             <span class="material-symbols-outlined text-[16px]">person</span>
-                            <span class="text-xs font-medium uppercase tracking-wide">Owner</span>
+                            <span class="text-xs font-medium uppercase tracking-wide">Propietario/a</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <div
@@ -186,17 +186,17 @@
                 <a href="{{ document.file.url }}" download="{{ document.name }}"
                     class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
                     <span class="material-symbols-outlined text-[18px]">download</span>
-                    Download
+                    Descargar
                 </a>
                 <button type="button" id="open-share-modal"
                     class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
                     <span class="material-symbols-outlined text-[18px]">share</span>
-                    Share
+                    Compartir
                 </button>
                 <a href="{% url 'chat' document.id %}"
                     class="col-span-2 flex items-center justify-center gap-2 rounded-xl h-12 px-4 bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm font-bold mt-2">
                     <span class="material-symbols-outlined text-[20px]">chat</span>
-                    Chat with Document
+                    Chat
                 </a>
             </div>
             <div class="p-6 border-b border-dark-border space-y-4">
@@ -241,24 +241,15 @@
             </div>
             <div class="flex flex-col flex-1 p-6 min-h-0 bg-dark-bg/30">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-white text-lg font-bold">AI summary</h3>
+                    <h3 class="text-white text-lg font-bold">Resumen de IA</h3>
                     <div class="flex gap-2">
-                        <button
-                            class="p-1.5 text-dark-text-muted hover:text-primary rounded-md hover:bg-dark-bg transition-colors"
-                            title="Copy to Clipboard">
-                            <span class="material-symbols-outlined text-[20px]">content_copy</span>
-                        </button>
-                        <button
-                            class="p-1.5 text-dark-text-muted hover:text-primary rounded-md hover:bg-dark-bg transition-colors"
-                            title="Edit Mode">
-                            <span class="material-symbols-outlined text-[20px]">edit</span>
-                        </button>
+
                     </div>
                 </div>
                 <div class="flex-1 relative group">
                     <textarea
                         class="w-full h-full resize-none rounded-xl border border-dark-border bg-dark-bg/60 p-4 text-sm leading-relaxed text-dark-text focus:border-primary focus:ring-1 focus:ring-primary focus:bg-dark-bg transition-all font-mono selection:bg-primary/30 caret-primary"
-                        spellcheck="false">{{ document.summary|default:"No extracted text available." }}</textarea>
+                        spellcheck="false">{{ document.summary|default:"No hay texto disponible." }}</textarea>
                 </div>
             </div>
         </aside>

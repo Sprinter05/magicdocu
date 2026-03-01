@@ -17,7 +17,7 @@
             <a class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-primary/20 text-primary font-medium border border-primary/20"
                 href="#">
                 <span class="material-symbols-outlined">book_4</span>
-                <span>Documents</span>
+                <span>Documentos</span>
             </a>
         </div>
         <div class="h-px bg-border-dark my-2 mx-2"></div>
@@ -25,8 +25,7 @@
             <div class="flex flex-col gap-3">
                 <div class="flex flex-col gap-2 group cursor-pointer">
                     <span
-                        class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Date
-                        Modified</span>
+                        class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Fecha de creación</span>
                     <div class="flex flex-col gap-2">
                         <label class="flex items-center gap-3 cursor-pointer group">
                             <div class="relative flex items-center">
@@ -36,7 +35,7 @@
                                     class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                             </div>
                             <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Today</span>
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Hoy</span>
                         </label>
                         <label class="flex items-center gap-3 cursor-pointer group">
                             <div class="relative flex items-center">
@@ -46,8 +45,7 @@
                                     class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                             </div>
                             <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
-                                7 Days</span>
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Últimos 7 días</span>
                         </label>
                         <label class="flex items-center gap-3 cursor-pointer group">
                             <div class="relative flex items-center">
@@ -57,16 +55,14 @@
                                     class="material-symbols-outlined text-black text-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 pointer-events-none font-bold">check</span>
                             </div>
                             <span
-                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Last
-                                30 Days</span>
+                                class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">Últimos 30 días</span>
                         </label>
                     </div>
                 </div>
                 <div class="flex flex-col gap-3">
                     <div class="flex items-center justify-between group cursor-pointer">
                         <span
-                            class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">File
-                            Type</span>
+                            class="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors">Extensión de fichero</span>
                     </div>
                     <div class="flex flex-wrap gap-2">
                         {% for ext in all_extensions %}
@@ -180,12 +176,8 @@
         <div class="max-w-[1600px] mx-auto">
             <div class="flex flex-col gap-6 mb-8">
                 <div class="flex items-center justify-between">
-                    <h1 class="text-2xl font-bold text-text-primary">Document Library</h1>
+                    <h1 class="text-2xl font-bold text-text-primary">Documentos</h1>
                     <div class="flex items-center gap-3">
-                        <button
-                            class="flex items-center justify-center size-9 rounded-lg bg-background-card border border-border-dark text-text-secondary hover:text-white hover:border-primary/50 transition-colors shadow-sm">
-                            <span class="material-symbols-outlined text-[20px]">sort</span>
-                        </button>
                         <button
                             class="flex items-center justify-center size-9 rounded-lg bg-primary text-white shadow-[0_0_15px_rgba(139,92,246,0.4)] hover:bg-primary/90 transition-colors">
                             <span class="material-symbols-outlined text-[20px]">add</span>
@@ -193,7 +185,7 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-2 items-center">
-                    <span class="text-sm text-text-secondary font-medium mr-2">Active Filters:</span>
+                    <span class="text-sm text-text-secondary font-medium mr-2">Filtros activos:</span>
                     <div id="activetypefilters"
                         class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
                         <span class="text-xs font-semibold text-secondary-accent">Type:</span>
@@ -213,9 +205,6 @@
                             <span class="material-symbols-outlined text-[14px]">close</span>
                         </button>
                     </div>
-                    <button type="button" data-action="clear-all"
-                        class="text-xs font-medium text-text-secondary hover:text-primary ml-2 underline decoration-dashed transition-colors">Clear
-                        All</button>
                 </div>
             </div>
             <div id="documents-container">
@@ -357,6 +346,8 @@
                     {% empty %}
                     <p>No tienes mana, guapo. Cuando lleguen los documentos, este lugar se pone fino.</p>
                     {% endfor %}
+                </div>
+                <div class="flex items-center justify-center mt-12 pb-8">
                 </div>
             </div>
         </div>
