@@ -239,7 +239,10 @@ def document_view(request):
 
     delfile = request.GET.get("delete")
     if delfile:
-        all_documents.filter(file=delfile).first().delete()
+        fileObj = Document.objects.get(file=delfile)
+        if request.user.id == fileObj.author.id:
+            os.remove(fileObj.file.path)
+            fileObj.delete()
     
     filtered_documents = all_documents
     tag_filter = request.GET.get("tags")
