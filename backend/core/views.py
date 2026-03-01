@@ -1,26 +1,19 @@
-import mimetypes
-import os
-import math
 import csv
 import io
-import logging
+import mimetypes
+import os
+from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import HttpResponseRedirect, JsonResponse, FileResponse
+from django.http import JsonResponse, FileResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from core.forms import UploadFileForm
-from datetime import timedelta
-from pgvector.django import CosineDistance
-
-
-from core.forms import UploadFileForm, SelectFileForm
 from core.models import ChatMessage, ChatSession, Document, DocumentChunk
 from core.tasks import *
-from core.workers import *
 
 logger = logging.getLogger(__name__)
 
@@ -332,7 +325,7 @@ def document_content(request, id):
     try:
         if extension == "CSV":
             # Read CSV and return as JSON
-            with document.file.open('r', encoding='utf-8-sig') as f:
+            with document.file.open('r') as f:
                 content = f.read()
                 # Detect delimiter
                 sniffer = csv.Sniffer()
@@ -351,7 +344,7 @@ def document_content(request, id):
 
         elif extension in ["TXT", "MD", "LOG"]:
             # Read text file
-            with document.file.open('r', encoding='utf-8-sig') as f:
+            with document.file.open('r') as f:
                 content = f.read()
                 return JsonResponse({"type": "text", "content": content})
 
