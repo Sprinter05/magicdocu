@@ -203,15 +203,6 @@
                             <span class="material-symbols-outlined text-[14px]">close</span>
                         </button>
                     </div>
-                    <div id="activetimefilters"
-                        class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
-                        <span class="text-xs font-semibold text-secondary-accent">Time:</span>
-                        <span id="active-date">Last 7 Days</span>
-                        <button type="button" data-filter="date"
-                            class="ml-1 text-text-secondary hover:text-red-400 flex items-center justify-center size-4 rounded-full hover:bg-white/10 transition-colors">
-                            <span class="material-symbols-outlined text-[14px]">close</span>
-                        </button>
-                    </div>
                     <div id="activetagfilters"
                         class="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-primary/40 rounded-full shadow-sm text-sm text-text-primary group transition-all hover:bg-white/10">
                         <span class="text-xs font-semibold text-secondary-accent">Tag:</span>
@@ -462,7 +453,6 @@
             var filetypesLabel = document.getElementById('active-filetypes');
             var tagsLabel = document.getElementById('active-tags');
             var dateLabel = document.getElementById('active-date');
-            var dateFilterGroup = document.getElementById('activetimefilters');
             var filetypeFilterGroup = document.getElementById('activetypefilters');
             var tagFilterGroup = document.getElementById('activetagfilters');
 
@@ -514,11 +504,6 @@
             }
 
             if (dateLabel) {
-                if (!selectedDate) {
-                    dateFilterGroup.style.display = 'none';
-                } else {
-                    dateFilterGroup.style.display = 'flex';
-                }
                 dateLabel.textContent = dateText;
             }
         }
