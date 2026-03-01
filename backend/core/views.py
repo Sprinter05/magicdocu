@@ -315,9 +315,17 @@ def document_detail(request, id):
     document_tags = document.tags.all()
     all_tags = Tag.objects.all().order_by("name")
 
+    if request.method == "POST":
+        shared_user_ids = request.POST.getlist("shared_user_ids")
+        selected_users = AuthUser.objects.filter(id__in=shared_user_ids)
+        document.shared_users.set(selected_users)
+        return redirect("document_detail", id=id)
+
     shared_user = request.GET.get("add_shared_user")
     if shared_user:
         document.shared_users.add(AuthUser.objects.all().filter(username=shared_user).first())
+
+    all_users = AuthUser.objects.exclude(id=document.author_id).order_by("username")
 
     doc_data = {
         "id": document.pk,
@@ -333,8 +341,13 @@ def document_detail(request, id):
         "tags": document_tags,
         "tag_ids": list(document_tags.values_list("id", flat=True)),
         "shared_users": document.shared_users,
+        "shared_user_ids": list(document.shared_users.values_list("id", flat=True)),
     }
-    return render(request, "document_detail.html", {"document": doc_data, "all_tags": all_tags})
+    return render(request, "document_detail.html", {
+        "document": doc_data,
+        "all_tags": all_tags,
+        "all_users": all_users,
+    })
 
 
 @login_required

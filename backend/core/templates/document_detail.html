@@ -188,7 +188,7 @@
                     <span class="material-symbols-outlined text-[18px]">download</span>
                     Download
                 </a>
-                <button
+                <button type="button" id="open-share-modal"
                     class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
                     <span class="material-symbols-outlined text-[18px]">share</span>
                     Share
@@ -263,8 +263,60 @@
             </div>
         </aside>
     </main>
+    <div id="share-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div id="share-modal-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative z-10 flex min-h-full items-center justify-center p-4">
+            <div
+                class="w-full max-w-lg rounded-2xl border border-dark-border bg-dark-surface shadow-2xl shadow-black/40">
+                <div class="flex items-center justify-between border-b border-dark-border px-6 py-4">
+                    <div>
+                        <h3 class="text-white text-lg font-bold">Share document</h3>
+                        <p class="text-xs text-dark-text-muted mt-1">Select users that can access this document.</p>
+                    </div>
+                    <button type="button" id="close-share-modal"
+                        class="p-2 text-dark-text-muted hover:text-primary rounded-md hover:bg-dark-bg transition-colors"
+                        aria-label="Close share dialog">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <form method="post" action="{% url 'document_detail' document.id %}" class="p-6 space-y-4">
+                    {% csrf_token %}
+                    <div class="max-h-64 overflow-y-auto pr-1 space-y-2">
+                        {% for user in all_users %}
+                        <label
+                            class="flex items-center gap-3 rounded-lg border border-dark-border bg-dark-bg/60 px-3 py-2">
+                            <input type="checkbox" name="shared_user_ids" value="{{ user.id }}"
+                                class="size-4 rounded border-dark-border bg-transparent text-primary focus:ring-primary"
+                                {% if user.id in document.shared_user_ids %}checked{% endif %} />
+                            <div class="flex items-center gap-2">
+                                <div
+                                    class="bg-primary/20 text-primary h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold border border-primary/30">
+                                    {{ user.username|slice:":2"|upper }}
+                                </div>
+                                <span class="text-sm text-dark-text">{{ user.username }}</span>
+                            </div>
+                        </label>
+                        {% empty %}
+                        <p class="text-sm text-dark-text-muted">No users available.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" id="cancel-share-modal"
+                            class="h-10 px-4 rounded-xl border border-dark-border text-dark-text hover:text-primary hover:border-primary/50 transition-all text-sm font-semibold">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="h-10 px-4 rounded-xl bg-primary text-white hover:bg-primary-hover text-sm font-semibold transition-all">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script>
         // Load CSV or Text content dynamically
+
         const fileType = "{{ document.filetype }}";
         const documentId = {{ document.id }};
 
@@ -386,6 +438,38 @@
             div.textContent = text;
             return div.innerHTML;
         }
+
+        const shareModal = document.getElementById('share-modal');
+        const openShareModal = document.getElementById('open-share-modal');
+        const closeShareModal = document.getElementById('close-share-modal');
+        const cancelShareModal = document.getElementById('cancel-share-modal');
+        const shareModalOverlay = document.getElementById('share-modal-overlay');
+
+        function setShareModalOpen(isOpen) {
+            if (!shareModal) {
+                return;
+            }
+            shareModal.classList.toggle('hidden', !isOpen);
+            shareModal.setAttribute('aria-hidden', String(!isOpen));
+        }
+
+        if (openShareModal) {
+            openShareModal.addEventListener('click', () => setShareModalOpen(true));
+        }
+        if (closeShareModal) {
+            closeShareModal.addEventListener('click', () => setShareModalOpen(false));
+        }
+        if (cancelShareModal) {
+            cancelShareModal.addEventListener('click', () => setShareModalOpen(false));
+        }
+        if (shareModalOverlay) {
+            shareModalOverlay.addEventListener('click', () => setShareModalOpen(false));
+        }
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setShareModalOpen(false);
+            }
+        });
     </script>
 
 </body>
