@@ -6,6 +6,8 @@ Gestor inteligente de archivos con funcionalidades para interrelacionarlos y con
 ## Objetivo
 El objetivo de este proyecto es facilitar la navegación entre documentos de empresa en grandes cantidades, de diferentes tipos, formatos y funciones. Centrado en la búsqueda dinámica e inteligente, esta plataforma permite al usuario gestionar sus documentos de una forma más ordenada y coherente, independientemente de las diferencias entre éstos.
 
+<img width="1865" height="770" alt="imagen" src="https://github.com/user-attachments/assets/4d2d833f-b89b-4b7f-b824-d6cf8cbb83c7" />
+
 ## Funcionalidades
 - Subida y eliminación de archivos.
 - Extracción de palabras clave de cada documento.
@@ -14,6 +16,8 @@ El objetivo de este proyecto es facilitar la navegación entre documentos de emp
 - Sistema de etiquetas personalizadas.
 - Búsquedas personalizadas mediante diferentes parámetros.
 - Chatbot integrado con información sobre los ficheros, para contextualizar de forma más sencilla.
+
+<img width="1408" height="758" alt="imagen" src="https://github.com/user-attachments/assets/005a073f-0df1-4ffe-84a6-892269935743" />
 
 ## Stack
 - **Front-end**: Python (con [Django](https://www.djangoproject.com/)).
