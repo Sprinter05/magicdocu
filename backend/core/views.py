@@ -16,6 +16,8 @@ from core.forms import UploadFileForm
 from core.models import ChatMessage, ChatSession, Document, DocumentChunk, Tag
 from core.tasks import *
 
+from users.models import AuthUser
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_TAG_COLOR = "#94a3b8"
@@ -105,7 +107,6 @@ def _get_accessible_document(user, document_id):
         Document.objects.filter(Q(author=user) | Q(shared_users=user)).distinct(),
         pk=document_id,
     )
-
 
 def _embed_query(text: str) -> list[float]:
     """Generate an embedding for a single query string."""
@@ -230,7 +231,7 @@ def document_view(request):
     documents = []
     all_extensions = []
     all_tags = Tag.objects.all().order_by("name")
-    all_documents = Document.objects.all()
+    all_documents = Document.objects.filter(Q(author=request.user) | Q(shared_users=request.user)).distinct()
 
     downfile = request.GET.get("download")
     if downfile:
@@ -313,6 +314,10 @@ def document_detail(request, id):
     extension = file_name.split(".")[-1].upper()
     document_tags = document.tags.all()
     all_tags = Tag.objects.all().order_by("name")
+
+    shared_user = request.GET.get("add_shared_user")
+    if shared_user:
+        document.shared_users.add(AuthUser.objects.all().filter(username=shared_user).first())
 
     doc_data = {
         "id": document.pk,
