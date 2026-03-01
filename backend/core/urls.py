@@ -8,5 +8,6 @@ urlpatterns = [
     path('upload/status/<int:document_id>/', views.upload_status, name='upload_status'),
     path('chat/<int:document_id>/', views.chat_view, name='chat'),
     path('api/chat/', views.chat_api, name='chat_api'),
-    path('<int:id>/', views.document_detail, name='document_detail')
+    path('<int:id>/', views.document_detail, name='document_detail'),
+    path('<int:id>/content/', views.document_content, name='document_content'),
 ]

@@ -90,29 +90,60 @@
                     <span class="material-symbols-outlined text-dark-text-muted text-sm">chevron_right</span>
                     <span class="text-white text-sm font-semibold leading-normal">{{ document.name }}</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button
-                        class="p-2 text-dark-text-muted hover:text-primary hover:bg-dark-border rounded-lg transition-colors"
-                        title="Zoom Out">
-                        <span class="material-symbols-outlined text-[20px]">remove</span>
-                    </button>
-                    <span
-                        class="text-xs font-medium text-dark-text-muted bg-dark-bg border border-dark-border px-2 py-1 rounded">100%</span>
-                    <button
-                        class="p-2 text-dark-text-muted hover:text-primary hover:bg-dark-border rounded-lg transition-colors"
-                        title="Zoom In">
-                        <span class="material-symbols-outlined text-[20px]">add</span>
-                    </button>
-                    <div class="h-4 w-px bg-dark-border mx-2"></div>
-                    <button
-                        class="p-2 text-dark-text-muted hover:text-primary hover:bg-dark-border rounded-lg transition-colors"
-                        title="Full Screen">
-                        <span class="material-symbols-outlined text-[20px]">fullscreen</span>
-                    </button>
-                </div>
             </div>
             <div class="flex-1 overflow-hidden bg-[#0f172a] flex justify-center shadow-inner-soft relative">
+                <!-- PDF Viewer -->
+                {% if document.filetype == "PDF" %}
                 <iframe src="{{ document.file.url }}" class="w-full h-full border-none"></iframe>
+
+                <!-- CSV Viewer -->
+                {% elif document.filetype == "CSV" %}
+                <div id="csv-viewer" class="w-full h-full overflow-auto p-6">
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center">
+                            <span class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">table_chart</span>
+                            <p class="text-dark-text-muted mt-4">Loading CSV data...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Viewer -->
+                {% elif document.filetype == "TXT" or document.filetype == "MD" or document.filetype == "LOG" %}
+                <div id="text-viewer" class="w-full h-full overflow-auto p-6">
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center">
+                            <span class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">description</span>
+                            <p class="text-dark-text-muted mt-4">Loading text content...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Viewer -->
+                {% elif document.filetype == "PNG" or document.filetype == "JPG" or document.filetype == "JPEG" or document.filetype == "GIF" or document.filetype == "WEBP" %}
+                <div class="w-full h-full overflow-auto flex items-center justify-center p-6 bg-[#0B1120]">
+                    <img src="{{ document.file.url }}" alt="{{ document.name }}" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+                </div>
+
+                <!-- Unsupported Files (DOCX, XLSX, PPTX, etc.) -->
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center p-8">
+                    <div class="max-w-md text-center space-y-6">
+                        <div class="bg-dark-surface rounded-2xl p-8 border border-dark-border">
+                            <span class="material-symbols-outlined text-cyan-accent text-7xl mb-4">visibility_off</span>
+                            <h3 class="text-white text-xl font-bold mb-2">Preview Not Available</h3>
+                            <p class="text-dark-text-muted mb-6">{{ document.filetype }} files cannot be previewed in the browser.</p>
+                            <div class="space-y-3">
+                                <a href="{{ document.file.url }}" download="{{ document.name }}"
+                                    class="flex items-center justify-center gap-2 rounded-xl h-12 px-6 bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm font-bold w-full">
+                                    <span class="material-symbols-outlined text-[20px]">download</span>
+                                    Download to View
+                                </a>
+                                <p class="text-xs text-dark-text-muted">You can still chat with this document using AI</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </section>
         <aside
@@ -120,10 +151,6 @@
             <div class="p-6 border-b border-dark-border">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-white text-lg font-bold">Details</h3>
-                    <span
-                        class="inline-flex items-center rounded-md bg-cyan-950 px-2 py-1 text-xs font-medium text-cyan-accent ring-1 ring-inset ring-cyan-accent/30">
-                        Synced
-                    </span>
                 </div>
                 <div class="space-y-4">
                     <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
@@ -180,7 +207,7 @@
             </div>
             <div class="flex flex-col flex-1 p-6 min-h-0 bg-dark-bg/30">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-white text-lg font-bold">Extracted Text</h3>
+                    <h3 class="text-white text-lg font-bold">AI summary</h3>
                     <div class="flex gap-2">
                         <button
                             class="p-1.5 text-dark-text-muted hover:text-primary rounded-md hover:bg-dark-bg transition-colors"
@@ -198,16 +225,135 @@
                     <textarea
                         class="w-full h-full resize-none rounded-xl border border-dark-border bg-dark-bg/60 p-4 text-sm leading-relaxed text-dark-text focus:border-primary focus:ring-1 focus:ring-primary focus:bg-dark-bg transition-all font-mono selection:bg-primary/30 caret-primary"
                         spellcheck="false">{{ document.summary|default:"No extracted text available." }}</textarea>
-                    <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span
-                            class="inline-flex items-center rounded-full bg-dark-bg/90 px-3 py-1 text-xs font-medium text-cyan-accent shadow-sm border border-cyan-accent/20 backdrop-blur-sm">
-                            Confidence: 98%
-                        </span>
-                    </div>
                 </div>
             </div>
         </aside>
     </main>
+
+    <script>
+        // Load CSV or Text content dynamically
+        const fileType = "{{ document.filetype }}";
+        const documentId = {{ document.id }};
+
+        if (fileType === "CSV") {
+            loadCSVContent();
+        } else if (fileType === "TXT" || fileType === "MD" || fileType === "LOG") {
+            loadTextContent();
+        }
+
+        async function loadCSVContent() {
+            try {
+                const response = await fetch(`/documents/${documentId}/content/`);
+                const data = await response.json();
+
+                if (data.error) {
+                    showError('csv-viewer', data.error);
+                    return;
+                }
+
+                const viewer = document.getElementById('csv-viewer');
+                if (!data.rows || data.rows.length === 0) {
+                    viewer.innerHTML = `
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-center">
+                                <span class="material-symbols-outlined text-dark-text-muted text-6xl">table_chart</span>
+                                <p class="text-dark-text-muted mt-4">CSV file is empty</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Create table
+                let html = `
+                    <div class="bg-dark-surface rounded-xl border border-dark-border overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-dark-bg border-b border-dark-border sticky top-0">
+                                    <tr>
+                `;
+
+                data.headers.forEach(header => {
+                    html += `<th class="px-4 py-3 text-left text-xs font-semibold text-cyan-accent uppercase tracking-wider">${escapeHtml(header)}</th>`;
+                });
+
+                html += `
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-dark-border">
+                `;
+
+                data.rows.forEach((row, idx) => {
+                    html += `<tr class="hover:bg-dark-bg/50 transition-colors">`;
+                    data.headers.forEach(header => {
+                        const value = row[header] || '';
+                        html += `<td class="px-4 py-3 text-dark-text">${escapeHtml(value)}</td>`;
+                    });
+                    html += `</tr>`;
+                });
+
+                html += `
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="px-4 py-3 bg-dark-bg border-t border-dark-border text-xs text-dark-text-muted">
+                            Showing ${data.rows.length} rows
+                        </div>
+                    </div>
+                `;
+
+                viewer.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading CSV:', error);
+                showError('csv-viewer', 'Failed to load CSV content');
+            }
+        }
+
+        async function loadTextContent() {
+            try {
+                const response = await fetch(`/documents/${documentId}/content/`);
+                const data = await response.json();
+
+                if (data.error) {
+                    showError('text-viewer', data.error);
+                    return;
+                }
+
+                const viewer = document.getElementById('text-viewer');
+                viewer.innerHTML = `
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-dark-surface rounded-xl border border-dark-border p-6">
+                            <pre class="text-dark-text font-mono text-sm leading-relaxed whitespace-pre-wrap break-words">${escapeHtml(data.content)}</pre>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading text:', error);
+                showError('text-viewer', 'Failed to load text content');
+            }
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center bg-dark-surface rounded-xl p-8 border border-dark-border max-w-md">
+                            <span class="material-symbols-outlined text-red-400 text-6xl">error</span>
+                            <p class="text-dark-text mt-4 font-semibold">Error Loading File</p>
+                            <p class="text-dark-text-muted text-sm mt-2">${escapeHtml(message)}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
 
 </body>
 

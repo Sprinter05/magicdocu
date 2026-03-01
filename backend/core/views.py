@@ -1,6 +1,9 @@
 import mimetypes
 import os
 import math
+import csv
+import io
+import logging
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -299,7 +302,7 @@ def document_view(request):
 def document_detail(request, id):
     document = get_object_or_404(Document, pk=id)
     file_name = document.file.name.split("/")[-1]
-    extension = file_name.split(".")[-1]
+    extension = file_name.split(".")[-1].upper()
     document_tags = document.tags.all()
 
     doc_data = {
@@ -317,4 +320,46 @@ def document_detail(request, id):
         "shared_users": document.shared_users,
     }
     return render(request, "document_detail.html", {"document": doc_data})
+
+
+@login_required
+def document_content(request, id):
+    """Return file content for preview (CSV, TXT, etc.)"""
+    document = get_object_or_404(Document, pk=id)
+    file_name = document.file.name.split("/")[-1]
+    extension = file_name.split(".")[-1].upper()
+
+    try:
+        if extension == "CSV":
+            # Read CSV and return as JSON
+            with document.file.open('r', encoding='utf-8-sig') as f:
+                content = f.read()
+                # Detect delimiter
+                sniffer = csv.Sniffer()
+                try:
+                    dialect = sniffer.sniff(content[:1024])
+                    delimiter = dialect.delimiter
+                except:
+                    delimiter = ','
+
+                reader = csv.DictReader(io.StringIO(content), delimiter=delimiter)
+                rows = list(reader)
+                if rows:
+                    headers = list(rows[0].keys())
+                    return JsonResponse({"type": "csv", "headers": headers, "rows": rows})
+                return JsonResponse({"type": "csv", "headers": [], "rows": []})
+
+        elif extension in ["TXT", "MD", "LOG"]:
+            # Read text file
+            with document.file.open('r', encoding='utf-8-sig') as f:
+                content = f.read()
+                return JsonResponse({"type": "text", "content": content})
+
+        else:
+            return JsonResponse({"error": "Unsupported file type for preview"}, status=400)
+
+    except Exception as e:
+        logger.error(f"Error reading file content: {e}")
+        return JsonResponse({"error": str(e)}, status=500)
+
 
