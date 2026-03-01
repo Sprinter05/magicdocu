@@ -60,19 +60,7 @@
             </label>
         </div>
         <div class="flex flex-1 justify-end gap-6">
-            <nav class="flex items-center gap-6 mr-4 hidden md:flex">
-                <a class="text-dark-text hover:text-primary text-sm font-medium leading-normal transition-colors"
-                    href="#">Documents</a>
-                <a class="text-dark-text-muted hover:text-primary text-sm font-medium leading-normal transition-colors"
-                    href="#">Templates</a>
-                <a class="text-dark-text-muted hover:text-primary text-sm font-medium leading-normal transition-colors"
-                    href="#">Settings</a>
-            </nav>
             <div class="flex items-center gap-3">
-                <button
-                    class="flex items-center justify-center rounded-xl h-10 w-10 bg-dark-bg border border-dark-border text-dark-text-muted hover:bg-dark-border transition-colors">
-                    <span class="material-symbols-outlined text-[20px]">notifications</span>
-                </button>
                 <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-dark-border shadow-sm cursor-pointer"
                     data-alt="User profile picture"
                     style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDNy7wmggfZ1UupeSv9kokKBUdCjRjrQdwykHvHxTcaGUXjQpzXJqet3aAHRv3rARrBhHJAkyusettQWJ_L49FH8eC_Pyi-cBqtDbhZZg8HTSqwbAvO4EuRmExb3d1GwWvn-cqD7b3qVZ_V511pDrdGpAMsbo5u5RDq8UO7KXImVDq4qYrZVj5TH2EfbmOzp1sBCNXjJ0pJtYcbDiSs6mASlFepBlfWmwn3jMi4hlUjBlPFZoi8artSV8zfnwbR2eBwWAvHdWdtpSM");'>
@@ -189,11 +177,11 @@
                 </div>
             </div>
             <div class="p-6 grid grid-cols-2 gap-3 border-b border-dark-border">
-                <button
+                <a href="{{ document.file.url }}" download="{{ document.name }}"
                     class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
                     <span class="material-symbols-outlined text-[18px]">download</span>
                     Download
-                </button>
+                </a>
                 <button
                     class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
                     <span class="material-symbols-outlined text-[18px]">share</span>
