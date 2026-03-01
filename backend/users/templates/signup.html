@@ -20,7 +20,7 @@
         </div>
 
         <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Sube, clasifica y busca documentos con
-            metadatos y OCR inteligente. Configura tu espacio en segundos.</p>
+            metadatos. Configura tu espacio en segundos.</p>
         {% if form.errors %}
         <div class="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-xs space-y-1">
             {% for field in form %}
@@ -54,11 +54,6 @@
                 <label class="text-sm font-medium text-slate-700 dark:text-slate-200">Confirmar contraseña</label>
                 <input type="password" name="password2" required placeholder="••••••••"
                     class="w-full rounded-xl border border-primary/20 bg-white/70 dark:bg-background-dark/60 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
-            </div>
-            <div class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
-                <input id="terms" type="checkbox"
-                    class="mt-1 h-4 w-4 rounded border-primary/30 text-primary focus:ring-primary" required />
-                <label for="terms">Acepto los términos, privacidad y el procesamiento OCR de mis documentos.</label>
             </div>
             <button type="submit"
                 class="w-full bg-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-colors">Crear

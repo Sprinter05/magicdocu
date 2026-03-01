@@ -1,25 +1,33 @@
+import csv
+import io
 import mimetypes
 import os
-import math
+import re
+from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import HttpResponseRedirect, JsonResponse, FileResponse
-from django.shortcuts import get_object_or_404, render
+from django.http import JsonResponse, FileResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from core.forms import UploadFileForm
-from django.utils import timezone
-from pgvector.django import CosineDistance
-
-
-from core.forms import UploadFileForm, SelectFileForm
-from core.models import ChatMessage, ChatSession, Document, DocumentChunk
+from core.models import ChatMessage, ChatSession, Document, DocumentChunk, Tag
 from core.tasks import *
-from core.workers import *
+
+from users.models import AuthUser
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_TAG_COLOR = "#94a3b8"
+HEX_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
+
+
+def _normalize_tag_color(value: str) -> str:
+    if value and HEX_COLOR_RE.match(value):
+        return value.lower()
+    return DEFAULT_TAG_COLOR
 
 
 def index(request):
@@ -31,7 +39,13 @@ def dashboard(request):
     documents = Document.objects.filter(
         Q(author=request.user) | Q(shared_users=request.user)
     ).distinct()
-    return render(request, "dashboard.html", {"documents": documents})
+
+    recent_documents = documents.filter(created_date__gte=timezone.localdate())
+    return render(request, "dashboard.html", {
+        "documents": documents,
+        "document_count": len(documents),
+        "recent_document_count": len(recent_documents)
+        })
 
 
 def upload_file(request):
@@ -61,14 +75,24 @@ def upload_file(request):
         if form.is_valid():
             doc = form.save()
             # Trigger async embedding generation for PDFs
-            if doc.filetype and "pdf" in doc.filetype.lower():
-                get_document_summary.delay(doc.id)
-                process_document_embeddings.delay(doc.id)
-                process_document_keywords.delay(doc.id)
-            return HttpResponseRedirect("/")
+            get_document_summary.delay(doc.id)
+            process_document_embeddings.delay(doc.id)
+            process_document_keywords.delay(doc.id)
+            # If the client expects JSON (fetch/AJAX), return the new document id so frontend can poll /upload/status/<id>
+            return JsonResponse({'id': doc.id}, status=201)
     else:
         form = UploadFileForm()
     return render(request, "upload.html", {"form": form, "file_meta": file_meta})
+
+
+def upload_status(request, document_id):
+    document = get_object_or_404(Document, pk=document_id, author=request.user)
+    status = {
+        "embedded": document.embedded,
+        "summarised": document.summarised,
+    }
+    return JsonResponse(status)
+
 
 # ---------------------------------------------------------------------------
 # Chat views
@@ -83,7 +107,6 @@ def _get_accessible_document(user, document_id):
         Document.objects.filter(Q(author=user) | Q(shared_users=user)).distinct(),
         pk=document_id,
     )
-
 
 def _embed_query(text: str) -> list[float]:
     """Generate an embedding for a single query string."""
@@ -202,34 +225,39 @@ def chat_api(request):
         "message": assistant_content,
     })
 
-def search_view(request):
-    query = request.GET.get("q", "").strip()
-
-    if not query:
-        return render(request, "search.html", {"query": query, "results": []})
-
-    result = search_by_text(query)
-
-    return JsonResponse({"result": [(doc.id) for doc in result]}, status=202)
-
 @login_required
 def document_view(request):
     document_tags = []
     documents = []
     all_extensions = []
-    all_tags = []
-    all_documents = Document.objects.all()
+    all_tags = Tag.objects.all().order_by("name")
+    all_documents = Document.objects.filter(Q(author=request.user) | Q(shared_users=request.user)).distinct()
 
-    tag_filter = request.GET.get("download")
-    if tag_filter:
-        return FileResponse(all_documents.filter(file=tag_filter).first().file.open("rb"), as_attachment=True)
+    downfile = request.GET.get("download")
+    if downfile:
+        return FileResponse(all_documents.filter(file=downfile).first().file.open("rb"), as_attachment=True)
+
+    delfile = request.GET.get("delete")
+    if delfile:
+        fileObj = Document.objects.get(file=delfile)
+        if request.user.id == fileObj.author.id:
+            os.remove(fileObj.file.path)
+            fileObj.delete()
     
     filtered_documents = all_documents
     tag_filter = request.GET.get("tags")
     if tag_filter:
-        tag_filter = tag_filter.strip().split(",")
+        tag_filter = [tag.strip() for tag in tag_filter.split(",") if tag.strip()]
+        tag_names = [tag for tag in tag_filter if tag.lower() != "untagged"]
 
-        filtered_documents = all_documents.filter(tags__name__in=tag_filter)
+        tag_query = Q()
+        if tag_names:
+            tag_query |= Q(tags__name__in=tag_names)
+        if any(tag.lower() == "untagged" for tag in tag_filter):
+            tag_query |= Q(tags__isnull=True)
+
+        if tag_query:
+            filtered_documents = filtered_documents.filter(tag_query).distinct()
 
     filetype_param = request.GET.get("filetype")
     if filetype_param:
@@ -242,10 +270,17 @@ def document_view(request):
     date_filter = request.GET.get("date_filter")
     
     if date_filter == "today":
-        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now())
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.localdate())
     elif date_filter == "30":
-        filtered_documents = filtered_documents.filter(created_date__gte=datetime.timedelta(days=30))
-    
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now() - timedelta(days=30))
+    elif date_filter == "7":
+        filtered_documents = filtered_documents.filter(created_date__gte=timezone.now() - timedelta(days=7))
+
+    query = request.GET.get("q", "").strip()
+    if query:
+        result = search_by_text(query)
+        filtered_documents = filtered_documents.filter(id__in=[(doc.id) for doc in result])
+
     for document in filtered_documents:
         file_name = document.file.name.split("/")[-1]
         extension = file_name.split(".")[-1]
@@ -254,9 +289,6 @@ def document_view(request):
             all_extensions.append(extension)
 
         document_tags = document.tags.all()
-        for tag in document_tags:
-            if tag not in all_tags:
-                all_tags.append(tag)
 
         documents.append({
             "id": document.pk,
@@ -274,6 +306,145 @@ def document_view(request):
     context = {
         "documents": documents,
         "all_extensions": all_extensions,
-        "all_tags": document_tags
+        "all_tags": all_tags
     }
     return render(request, "documents.html", context)
+
+
+def document_detail(request, id):
+    document = get_object_or_404(Document, pk=id)
+    file_name = document.file.name.split("/")[-1]
+    extension = file_name.split(".")[-1].upper()
+    document_tags = document.tags.all()
+    all_tags = Tag.objects.all().order_by("name")
+
+    if request.method == "POST":
+        shared_user_ids = request.POST.getlist("shared_user_ids")
+        selected_users = AuthUser.objects.filter(id__in=shared_user_ids)
+        document.shared_users.set(selected_users)
+        return redirect("document_detail", id=id)
+
+    shared_user = request.GET.get("add_shared_user")
+    if shared_user:
+        document.shared_users.add(AuthUser.objects.all().filter(username=shared_user).first())
+
+    all_users = AuthUser.objects.exclude(id=document.author_id).order_by("username")
+
+    doc_data = {
+        "id": document.pk,
+        "name": file_name,
+        "file": document.file,
+        "summary": document.summary,
+        "author": document.author,
+        "filetype": extension,
+        "modified_date": document.modified_date,
+        "created_date": document.created_date,
+        "accessed_date": document.accessed_date,
+        "size": round(document.size / 1048576, 2),
+        "tags": document_tags,
+        "tag_ids": list(document_tags.values_list("id", flat=True)),
+        "shared_users": document.shared_users,
+        "shared_user_ids": list(document.shared_users.values_list("id", flat=True)),
+    }
+    return render(request, "document_detail.html", {
+        "document": doc_data,
+        "all_tags": all_tags,
+        "all_users": all_users,
+    })
+
+
+@login_required
+@require_POST
+def document_assign_tags(request, id):
+    document = _get_accessible_document(request.user, id)
+    tag_ids = request.POST.getlist("tag_ids")
+    tags = Tag.objects.filter(id__in=tag_ids)
+    document.tags.set(tags)
+
+    return redirect("document_detail", id=id)
+
+
+@login_required
+@require_POST
+def document_add_tag(request, id):
+    document = _get_accessible_document(request.user, id)
+    tag_name = request.POST.get("tag_name", "").strip()
+    if not tag_name:
+        return redirect("document_detail", id=id)
+
+    cleaned_name = " ".join(tag_name.split())
+    tag_color = _normalize_tag_color(request.POST.get("tag_color", "").strip())
+
+    tag = Tag.objects.filter(name__iexact=cleaned_name).first()
+    if not tag:
+        tag = Tag.objects.create(name=cleaned_name, color=tag_color)
+    document.tags.add(tag)
+
+    return redirect("document_detail", id=id)
+
+
+@login_required
+@require_POST
+def tags_add(request):
+    tag_name = request.POST.get("tag_name", "").strip()
+    if not tag_name:
+        return redirect("documents")
+
+    cleaned_name = " ".join(tag_name.split())
+    tag_color = _normalize_tag_color(request.POST.get("tag_color", "").strip())
+
+    tag = Tag.objects.filter(name__iexact=cleaned_name).first()
+    if not tag:
+        Tag.objects.create(name=cleaned_name, color=tag_color)
+
+    return redirect("documents")
+
+
+@login_required
+@require_POST
+def tags_delete(request, tag_id):
+    Tag.objects.filter(id=tag_id).delete()
+    return redirect("documents")
+
+
+@login_required
+def document_content(request, id):
+    """Return file content for preview (CSV, TXT, etc.)"""
+    document = get_object_or_404(Document, pk=id)
+    file_name = document.file.name.split("/")[-1]
+    extension = file_name.split(".")[-1].upper()
+
+    try:
+        if extension == "CSV":
+            # Read CSV and return as JSON
+            with document.file.open('r') as f:
+                content = f.read()
+                # Detect delimiter
+                sniffer = csv.Sniffer()
+                try:
+                    dialect = sniffer.sniff(content[:1024])
+                    delimiter = dialect.delimiter
+                except:
+                    delimiter = ','
+
+                reader = csv.DictReader(io.StringIO(content), delimiter=delimiter)
+                rows = list(reader)
+                if rows:
+                    headers = list(rows[0].keys())
+                    return JsonResponse({"type": "csv", "headers": headers, "rows": rows})
+                return JsonResponse({"type": "csv", "headers": [], "rows": []})
+
+        elif extension in ["TXT", "MD", "LOG"]:
+            # Read text file
+            with document.file.open('r') as f:
+                content = f.read()
+                return JsonResponse({"type": "text", "content": content})
+
+        else:
+            return JsonResponse({"error": "Unsupported file type for preview"}, status=400)
+
+    except Exception as e:
+        logger.error(f"Error reading file content: {e}")
+        return JsonResponse({"error": str(e)}, status=500)
+
+

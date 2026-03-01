@@ -64,20 +64,25 @@ def get_document_summary(self, document_id: int):
     text = convert_to_md(document.file.name)
 
     if not text:
-        document.summary = "No summary could be obtained"
-        document.save()
+        Document.objects.filter(pk=document_id).update(summary="No text could be extracted from the document", summarised=True)
         return
 
-    base = f"Only output in your following prompt a summary of the following text, up to a max of 30 words: "
+    message = f"You are a quick summary bot. You output NOTHING but a *brief* summary of the text after \
+    the tag <block-input> and before the tag </block-input>. If you cannot generate a good summary, \
+    output ONLY 'Summary Unavailable'. <block-input> {text} </block-input>"
+
     client = ollama.Client(host=settings.OLLAMA_BASE_URL)
     response = client.chat(
         model=settings.OLLAMA_CHAT_MODEL,
-        messages=[{"role": "user", "content": f"{base} {text}"}],
+        messages=[{"role": "user", "content": message}],
+        options={"temperature": 0.5},
     )
 
     summary = (json.loads(response.model_dump_json())["message"]["content"])
+
     document.summary = summary
-    document.save()
+    document.summarised = True
+    document.save(update_fields=["summary", "summarised"])
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
@@ -111,6 +116,7 @@ def process_document_keywords(self, document_id: int):
         document.keywords.add(key)
 
 
+
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
 def search_by_text(self, text: str):
     from core.models import Document, Keyword  # local import to avoid circular
@@ -133,7 +139,7 @@ def search_by_text(self, text: str):
         )
         objs |= obj
 
-    docs = Document.objects.all().filter(id__in=objs.values_list("document_id"))
+    docs = Document.objects.all().filter(keywords__in=objs).distinct()
     return docs
 
 
@@ -152,7 +158,7 @@ def process_document_embeddings(self, document_id: int):
     logger.info("Processing embeddings for document %s (%s)", document_id, file_path)
 
     # 1. Extract text
-    text = _extract_text_from_pdf(file_path)
+    text = convert_to_md(file_path)
     if not text.strip():
         logger.warning("No text extracted from document %s", document_id)
         document.embedded = True

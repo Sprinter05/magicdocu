@@ -72,16 +72,6 @@
                     </div>
                     <span class="text-lg font-bold tracking-tight text-white">MagicDocu</span>
                 </div>
-                <nav class="hidden md:flex items-center gap-8">
-                    <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors"
-                        href="#">Características</a>
-                    <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors"
-                        href="#">Precios</a>
-                    <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors"
-                        href="#">Testimonios</a>
-                    <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors"
-                        href="#">Contacto</a>
-                </nav>
                 <div class="flex items-center gap-4">
                     {% if user.is_authenticated %}
                     <a href="/dashboard/"
@@ -112,14 +102,14 @@
                                         class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
                                 </span>
-                                Nueva versión 2.0 disponible
+                                ¡Versión 1.0 disponible!
                             </div>
                             <h1
                                 class="text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl mb-6 leading-[1.1]">
                                 Convierte el <span class="text-gradient">caos documental</span> en orden inteligente
                             </h1>
                             <p class="text-lg text-slate-400 mb-8 leading-relaxed max-w-lg">
-                                Organiza tus archivos automáticamente con nuestro potente OCR y etiquetado inteligente.
+                                Organiza tus archivos automáticamente con nuestro etiquetado inteligente.
                                 Recupera el
                                 control de tu información en segundos.
                             </p>
@@ -137,28 +127,14 @@
                                     <span class="material-symbols-outlined text-sm">arrow_forward</span>
                                 </a>
                                 {% endif %}
-                                <button
+                                <a href="https://github.com/Sprinter05/magicdocu"
                                     class="flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/30 px-8 py-3.5 text-base font-bold text-slate-300 transition-all hover:bg-slate-800 hover:text-white hover:border-slate-600 backdrop-blur-sm">
-                                    <span class="material-symbols-outlined text-secondary">play_circle</span>
-                                    Ver Demo
-                                </button>
+                                    <span class="material-symbols-outlined text-secondary">code</span>
+                                    Ver en GitHub
+                                </a>
                             </div>
                             <div class="mt-8 flex items-center gap-4 text-sm text-slate-500">
-                                <div class="flex -space-x-2">
-                                    <div class="h-8 w-8 rounded-full border-2 border-background-dark bg-slate-700"
-                                        data-alt="User avatar 1"
-                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB0PnY2BCnzD2NYUOANEf44QVYoVM3rQ4jVZ66A8fffYM89sXLWPzMpsPYUlLiDeE_19Vkwy3EIw1Flh0ferEnhRWWHJzkwMgiMVjfZNemQJYRGdTWJx39_9ZcAAnDCRl3goX8X7VLiofMv4yfKP-MAhk2MTFG0TLPccjyI41s1NKLh8z0THe1e4_wz-REi5fhuoOxsiYDTbSlc8lorj8nMzVgp0sFgDN_ZrX2e9bxCdhV9pU1CoU5GpXBxZXirwPRhkr2LURQbgig'); background-size: cover;">
-                                    </div>
-                                    <div class="h-8 w-8 rounded-full border-2 border-background-dark bg-slate-700"
-                                        data-alt="User avatar 2"
-                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVhsJEM-ep7KobINakxJx5bXB0-t7I5fNN783dmZoVYiKH8BO3j_Lip3tQ4m-tIwxmYbNEZkgUIEF_G7jgPcNY1U5ikjXoOAKQZnYHgec36FFe4vXtCOwoNn2A4aDN5GI9VtBfZKEcPBszG9JDxaEJZyDnD46FC9hDbDmxLz95wNbuNkEMWM4HQ7OsnnzkvSFWtcdQcDgW-qIbBM3EYZz-oKfMgqcjWTLpdoyC-xCJhzCYESH88t1Uqu1KMWHSut00K_uCQ5EGD3Q'); background-size: cover;">
-                                    </div>
-                                    <div class="h-8 w-8 rounded-full border-2 border-background-dark bg-slate-700"
-                                        data-alt="User avatar 3"
-                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJhEOx7sogn9D0SmJNx1F8iD8Ga58aYMR3etL2o2kLq095Fr870iPUwKAGLQKiQO_OKNuzL16C3uDg3pdrMvKZf18-m_jnVcErCfdhzizDFAOjOi58WA1XpLSxHoBiVu8K6Jv-8l1dKKPIqdTSCT0H1TA2MUe3WLsdkIuBhBgIYEsLuSg-20xp2Yyppl6vga0VNu_LOebvFWZgwo1QP1C5eRppIT3wl-3y1uYG-QfCU7nz6ugs1SFm2QOALEYaxG2MOh1bh0X7XIY'); background-size: cover;">
-                                    </div>
-                                </div>
-                                <p class="text-slate-400">Usado por +1,000 equipos productivos</p>
+                                <p class="text-slate-400">100% Local y Open Source. Tus datos son solo tuyos.</p>
                             </div>
                         </div>
                         <div
@@ -220,7 +196,7 @@
                             información relevante por ti.
                         </p>
                     </div>
-                    <div class="grid md:grid-cols-3 gap-8">
+                    <div class="grid md:grid-cols-2 gap-8">
                         <div
                             class="group relative rounded-2xl border border-slate-800 glass-card p-8 shadow-sm transition-all hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-1">
                             <div
@@ -235,22 +211,6 @@
                                 Arrastra y suelta tus archivos. Nuestro sistema procesa múltiples formatos (PDF, JPG,
                                 PNG) al
                                 instante sin complicaciones.
-                            </p>
-                        </div>
-                        <div
-                            class="group relative rounded-2xl border border-slate-800 glass-card p-8 shadow-sm transition-all hover:shadow-2xl hover:shadow-secondary/10 hover:border-secondary/40 hover:-translate-y-1">
-                            <div
-                                class="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
-                            </div>
-                            <div
-                                class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/20 text-secondary border border-secondary/20 group-hover:bg-secondary group-hover:text-white transition-colors">
-                                <span class="material-symbols-outlined">center_focus_strong</span>
-                            </div>
-                            <h4 class="text-xl font-bold text-white mb-3">OCR Avanzado</h4>
-                            <p class="text-slate-400 leading-relaxed">
-                                Convierte imágenes y PDFs escaneados en texto 100% editable y buscable con una precisión
-                                líder en la
-                                industria.
                             </p>
                         </div>
                         <div
@@ -282,9 +242,9 @@
                                     De imagen a <span class="text-secondary">datos estructurados</span>
                                 </h3>
                                 <p class="text-slate-400 text-lg mb-8">
-                                    Mira cómo nuestra IA identifica fechas, montos y proveedores automáticamente,
-                                    eliminando la entrada
-                                    manual de datos.
+                                    Mira cómo nuestros modelos locales de IA resumen tu documento y extraen la información clave
+                                    automáticamente,
+                                    eliminando la entrada manual de datos de forma 100% privada.
                                 </p>
                                 <ul class="space-y-4">
                                     <li class="flex items-center gap-3 text-slate-300">
@@ -293,11 +253,7 @@
                                     </li>
                                     <li class="flex items-center gap-3 text-slate-300">
                                         <span class="material-symbols-outlined text-secondary">check_circle</span>
-                                        <span>Reconocimiento de escritura a mano</span>
-                                    </li>
-                                    <li class="flex items-center gap-3 text-slate-300">
-                                        <span class="material-symbols-outlined text-secondary">check_circle</span>
-                                        <span>Exportación a Excel, CSV o JSON</span>
+                                        <span>Análisis de Excel, CSV, Word o JSON</span>
                                     </li>
                                 </ul>
                             </div>
@@ -353,20 +309,20 @@
                         Empieza a organizar tus documentos hoy
                     </h2>
                     <p class="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
-                        Únete a miles de empresas que ya han digitalizado su archivo y recuperado horas de
-                        productividad.
+                        Ejecuta toda la analítica en tu propio equipo. Sin cuotas, sin límites de usuarios y con total
+                        garantía de privacidad.
                     </p>
                     <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <button
+                        <a href="https://github.com/Sprinter05/magicdocu"
                             class="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95 hover:shadow-primary/50">
-                            Prueba Gratis 14 Días
-                        </button>
-                        <button
+                            Ver en GitHub
+                        </a>
+                        <a href="https://github.com/Sprinter05/magicdocu/blob/main/README.md"
                             class="inline-flex items-center justify-center rounded-xl bg-transparent px-8 py-4 text-lg font-bold text-white border border-slate-700 hover:bg-slate-800 transition-all hover:border-slate-500">
-                            Agendar Demo
-                        </button>
+                            Leer Documentación
+                        </a>
                     </div>
-                    <p class="mt-6 text-sm text-slate-500">No requiere tarjeta de crédito • Cancela cuando quieras</p>
+                    <p class="mt-6 text-sm text-slate-500">Código Abierto • 100% Gratuito • Privacidad Total</p>
                 </div>
             </section>
         </main>
@@ -382,73 +338,18 @@
                             <span class="text-lg font-bold tracking-tight text-white">MagicDocu</span>
                         </div>
                         <p class="text-slate-400 text-sm leading-relaxed max-w-xs mb-6">
-                            La plataforma líder en gestión documental inteligente. Transformamos archivos estáticos en
-                            datos dinámicos
-                            para tu negocio.
+                            Una solución open source de gestión documental inteligente. Organiza de manera privada y
+                            local tus archivos estáticos, transformándolos en datos dinámicos.
                         </p>
-                        <div class="flex gap-4">
-                            <a class="text-slate-500 hover:text-white transition-colors" href="#">
-                                <span class="sr-only">Twitter</span>
-                                <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
-                                    </path>
-                                </svg>
-                            </a>
-                            <a class="text-slate-500 hover:text-white transition-colors" href="#">
-                                <span class="sr-only">LinkedIn</span>
-                                <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path clip-rule="evenodd"
-                                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
-                                        fill-rule="evenodd"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white mb-4">Producto</h4>
-                        <ul class="space-y-3 text-sm text-slate-400">
-                            <li><a class="hover:text-primary transition-colors" href="#">Características</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Integraciones</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Precios</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">API</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white mb-4">Recursos</h4>
-                        <ul class="space-y-3 text-sm text-slate-400">
-                            <li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Casos de Éxito</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Ayuda</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Comunidad</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white mb-4">Legal</h4>
-                        <ul class="space-y-3 text-sm text-slate-400">
-                            <li><a class="hover:text-primary transition-colors" href="#">Privacidad</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Términos</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Seguridad</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Cookies</a></li>
-                        </ul>
                     </div>
                 </div>
                 <div
                     class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p class="text-slate-500 text-sm">© 2023 MagicDocu. Todos los derechos reservados.</p>
-                    <div class="flex items-center gap-2 text-sm text-slate-500">
-                        <span
-                            class="inline-block h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]"></span>
-                        Todos los sistemas operativos
-                    </div>
+                    <p class="text-slate-500 text-sm">2026 - MagicDocu</p>
                 </div>
             </div>
         </footer>
     </div>
-    <script>
-        // Simple script to handle mobile menu toggle if needed in future
-        // Currently just a placeholder for potential interactivity
-    </script>
 </body>
 
 </html>

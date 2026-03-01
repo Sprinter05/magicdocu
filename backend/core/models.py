@@ -32,6 +32,7 @@ class Document(models.Model):
     keywords = models.ManyToManyField("core.Keyword", related_name="documents")
     
     embedded = models.BooleanField(default=False)
+    summarised = models.BooleanField(default=False)
 
     def __str__(self):
         return self.file.name if self.file else f"Document {self.pk}"
