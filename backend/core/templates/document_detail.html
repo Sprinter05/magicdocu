@@ -83,14 +83,6 @@
     <main class="flex flex-1 overflow-hidden">
         <section
             class="flex flex-col w-[70%] bg-[#0B1120] border-r border-dark-border h-[calc(100vh-64px)] overflow-hidden shadow-inner-soft">
-            <div class="px-8 py-4 flex items-center justify-between bg-dark-surface border-b border-dark-border">
-                <div class="flex items-center gap-2">
-                    <a class="text-dark-text-muted hover:text-primary text-sm font-medium leading-normal"
-                        href="{% url 'documents' %}">Documents</a>
-                    <span class="material-symbols-outlined text-dark-text-muted text-sm">chevron_right</span>
-                    <span class="text-white text-sm font-semibold leading-normal">{{ document.name }}</span>
-                </div>
-            </div>
             <div class="flex-1 overflow-hidden bg-[#0f172a] flex justify-center shadow-inner-soft relative">
                 <!-- PDF Viewer -->
                 {% if document.filetype == "PDF" %}
@@ -101,7 +93,8 @@
                 <div id="csv-viewer" class="w-full h-full overflow-auto p-6">
                     <div class="flex items-center justify-center h-full">
                         <div class="text-center">
-                            <span class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">table_chart</span>
+                            <span
+                                class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">table_chart</span>
                             <p class="text-dark-text-muted mt-4">Loading CSV data...</p>
                         </div>
                     </div>
@@ -112,16 +105,19 @@
                 <div id="text-viewer" class="w-full h-full overflow-auto p-6">
                     <div class="flex items-center justify-center h-full">
                         <div class="text-center">
-                            <span class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">description</span>
+                            <span
+                                class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">description</span>
                             <p class="text-dark-text-muted mt-4">Loading text content...</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Image Viewer -->
-                {% elif document.filetype == "PNG" or document.filetype == "JPG" or document.filetype == "JPEG" or document.filetype == "GIF" or document.filetype == "WEBP" %}
+                {% elif document.filetype == "PNG" or document.filetype == "JPG" or document.filetype == "JPEG" or
+                document.filetype == "GIF" or document.filetype == "WEBP" %}
                 <div class="w-full h-full overflow-auto flex items-center justify-center p-6 bg-[#0B1120]">
-                    <img src="{{ document.file.url }}" alt="{{ document.name }}" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+                    <img src="{{ document.file.url }}" alt="{{ document.name }}"
+                        class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
                 </div>
 
                 <!-- Unsupported Files (DOCX, XLSX, PPTX, etc.) -->
@@ -131,14 +127,16 @@
                         <div class="bg-dark-surface rounded-2xl p-8 border border-dark-border">
                             <span class="material-symbols-outlined text-cyan-accent text-7xl mb-4">visibility_off</span>
                             <h3 class="text-white text-xl font-bold mb-2">Preview Not Available</h3>
-                            <p class="text-dark-text-muted mb-6">{{ document.filetype }} files cannot be previewed in the browser.</p>
+                            <p class="text-dark-text-muted mb-6">{{ document.filetype }} files cannot be previewed in
+                                the browser.</p>
                             <div class="space-y-3">
                                 <a href="{{ document.file.url }}" download="{{ document.name }}"
                                     class="flex items-center justify-center gap-2 rounded-xl h-12 px-6 bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm font-bold w-full">
                                     <span class="material-symbols-outlined text-[20px]">download</span>
                                     Download to View
                                 </a>
-                                <p class="text-xs text-dark-text-muted">You can still chat with this document using AI</p>
+                                <p class="text-xs text-dark-text-muted">You can still chat with this document using AI
+                                </p>
                             </div>
                         </div>
                     </div>
