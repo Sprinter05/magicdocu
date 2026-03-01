@@ -74,6 +74,7 @@ def get_document_summary(self, document_id: int):
     response = ollama.chat(
         model=settings.OLLAMA_CHAT_MODEL,
         messages=[{"role": "user", "content": message}],
+        options={"temperature": 0.5},
     )
 
     summary = (json.loads(response.model_dump_json())["message"]["content"])
