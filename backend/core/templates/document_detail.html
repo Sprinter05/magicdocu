@@ -1,257 +1,209 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>MagicDocu - Document Details (Dark Mode)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#895af6",
-                        "primary-hover": "#7340ea",
-                        "dark-bg": "#0f172a", "dark-surface": "#1e293b", "dark-border": "#334155",
-                        "dark-text": "#f8fafc",
-                        "dark-text-muted": "#94a3b8",
-                        "cyan-accent": "#22d3ee",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
-                    boxShadow: {
-                        'inner-soft': 'inset 0 2px 10px 0 rgb(0 0 0 / 0.25)',
-                    }
-                },
-            },
+{% block title %}MagicDocu - Document Details{% endblock %}
+
+{% block extra_head %}
+<script>
+    tailwind.config = tailwind.config || {};
+    tailwind.config.theme = tailwind.config.theme || {};
+    tailwind.config.theme.extend = tailwind.config.theme.extend || {};
+    tailwind.config.theme.extend.colors = Object.assign(
+        {},
+        tailwind.config.theme.extend.colors || {},
+        {
+            "dark-bg": "#0f172a",
+            "dark-surface": "#1e293b",
+            "dark-border": "#334155",
+            "dark-text": "#f8fafc",
+            "dark-text-muted": "#94a3b8",
+            "cyan-accent": "#22d3ee",
+            "primary-hover": "#7340ea"
         }
-    </script>
-</head>
-
-<body class="bg-dark-bg text-dark-text font-display min-h-screen flex flex-col overflow-hidden">
-    <header
-        class="flex items-center justify-between whitespace-nowrap border-b border-solid border-dark-border bg-dark-surface px-8 py-3 sticky top-0 z-50">
-        <div class="flex items-center gap-8">
-            <div class="flex items-center gap-3 text-white">
-                <div class="size-8 text-primary">
-                    <span class="material-symbols-outlined text-3xl">smart_toy</span>
-                </div>
-                <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">MagicDocu</h2>
-            </div>
-            <label class="flex flex-col min-w-40 !h-10 max-w-64">
-                <div class="flex w-full flex-1 items-stretch rounded-xl h-full bg-dark-bg border border-dark-border">
-                    <div
-                        class="text-dark-text-muted flex border-none bg-transparent items-center justify-center pl-4 rounded-l-xl border-r-0">
-                        <span class="material-symbols-outlined text-[20px]">search</span>
-                    </div>
-                    <input
-                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-dark-text focus:outline-0 focus:ring-0 border-none bg-transparent focus:border-none h-full placeholder:text-dark-text-muted px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal"
-                        placeholder="Search files..." value="" />
-                </div>
-            </label>
-        </div>
-        <div class="flex flex-1 justify-end gap-6">
-            <nav class="flex items-center gap-6 mr-4 hidden md:flex">
-                <a class="text-dark-text hover:text-primary text-sm font-medium leading-normal transition-colors"
-                    href="#">Documents</a>
-                <a class="text-dark-text-muted hover:text-primary text-sm font-medium leading-normal transition-colors"
-                    href="#">Templates</a>
-                <a class="text-dark-text-muted hover:text-primary text-sm font-medium leading-normal transition-colors"
-                    href="#">Settings</a>
-            </nav>
-            <div class="flex items-center gap-3">
-                <button
-                    class="flex items-center justify-center rounded-xl h-10 w-10 bg-dark-bg border border-dark-border text-dark-text-muted hover:bg-dark-border transition-colors">
-                    <span class="material-symbols-outlined text-[20px]">notifications</span>
-                </button>
-                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-dark-border shadow-sm cursor-pointer"
-                    data-alt="User profile picture"
-                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDNy7wmggfZ1UupeSv9kokKBUdCjRjrQdwykHvHxTcaGUXjQpzXJqet3aAHRv3rARrBhHJAkyusettQWJ_L49FH8eC_Pyi-cBqtDbhZZg8HTSqwbAvO4EuRmExb3d1GwWvn-cqD7b3qVZ_V511pDrdGpAMsbo5u5RDq8UO7KXImVDq4qYrZVj5TH2EfbmOzp1sBCNXjJ0pJtYcbDiSs6mASlFepBlfWmwn3jMi4hlUjBlPFZoi8artSV8zfnwbR2eBwWAvHdWdtpSM");'>
-                </div>
-            </div>
-        </div>
-    </header>
-    <main class="flex flex-1 overflow-hidden">
-        <section
-            class="flex flex-col w-[70%] bg-[#0B1120] border-r border-dark-border h-[calc(100vh-64px)] overflow-hidden shadow-inner-soft">
-            <div class="flex-1 overflow-hidden bg-[#0f172a] flex justify-center shadow-inner-soft relative">
-                <!-- PDF Viewer -->
-                {% if document.filetype == "PDF" %}
-                <iframe src="{{ document.file.url }}" class="w-full h-full border-none"></iframe>
-
-                <!-- CSV Viewer -->
-                {% elif document.filetype == "CSV" %}
-                <div id="csv-viewer" class="w-full h-full overflow-auto p-6">
-                    <div class="flex items-center justify-center h-full">
-                        <div class="text-center">
-                            <span
-                                class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">table_chart</span>
-                            <p class="text-dark-text-muted mt-4">Loading CSV data...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Text Viewer -->
-                {% elif document.filetype == "TXT" or document.filetype == "MD" or document.filetype == "LOG" %}
-                <div id="text-viewer" class="w-full h-full overflow-auto p-6">
-                    <div class="flex items-center justify-center h-full">
-                        <div class="text-center">
-                            <span
-                                class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">description</span>
-                            <p class="text-dark-text-muted mt-4">Loading text content...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Image Viewer -->
-                {% elif document.filetype == "PNG" or document.filetype == "JPG" or document.filetype == "JPEG" or
-                document.filetype == "GIF" or document.filetype == "WEBP" %}
-                <div class="w-full h-full overflow-auto flex items-center justify-center p-6 bg-[#0B1120]">
-                    <img src="{{ document.file.url }}" alt="{{ document.name }}"
-                        class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
-                </div>
-
-                <!-- Unsupported Files (DOCX, XLSX, PPTX, etc.) -->
-                {% else %}
-                <div class="w-full h-full flex items-center justify-center p-8">
-                    <div class="max-w-md text-center space-y-6">
-                        <div class="bg-dark-surface rounded-2xl p-8 border border-dark-border">
-                            <span class="material-symbols-outlined text-cyan-accent text-7xl mb-4">visibility_off</span>
-                            <h3 class="text-white text-xl font-bold mb-2">Preview Not Available</h3>
-                            <p class="text-dark-text-muted mb-6">{{ document.filetype }} files cannot be previewed in
-                                the browser.</p>
-                            <div class="space-y-3">
-                                <a href="{{ document.file.url }}" download="{{ document.name }}"
-                                    class="flex items-center justify-center gap-2 rounded-xl h-12 px-6 bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm font-bold w-full">
-                                    <span class="material-symbols-outlined text-[20px]">download</span>
-                                    Download to View
-                                </a>
-                                <p class="text-xs text-dark-text-muted">You can still chat with this document using AI
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-        </section>
-        <aside
-            class="flex flex-col w-[30%] bg-dark-surface h-[calc(100vh-64px)] overflow-y-auto border-l border-dark-border">
-            <div class="p-6 border-b border-dark-border">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-white text-lg font-bold">Details</h3>
-                </div>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
-                        <div class="flex items-center gap-2 text-cyan-accent/70">
-                            <span class="material-symbols-outlined text-[16px]">description</span>
-                            <span class="text-xs font-medium uppercase tracking-wide">File Name</span>
-                        </div>
-                        <span class="text-sm font-medium text-dark-text truncate">{{ document.name }}</span>
-                    </div>
-                    <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
-                        <div class="flex items-center gap-2 text-cyan-accent/70">
-                            <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                            <span class="text-xs font-medium uppercase tracking-wide">Uploaded</span>
-                        </div>
-                        <span class="text-sm font-medium text-dark-text">{{ document.created_date }}</span>
-                    </div>
-                    <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
-                        <div class="flex items-center gap-2 text-cyan-accent/70">
-                            <span class="material-symbols-outlined text-[16px]">hard_drive</span>
-                            <span class="text-xs font-medium uppercase tracking-wide">Size</span>
-                        </div>
-                        <span class="text-sm font-medium text-dark-text">{{ document.size }} MB</span>
-                    </div>
-                    <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
-                        <div class="flex items-center gap-2 text-cyan-accent/70">
-                            <span class="material-symbols-outlined text-[16px]">person</span>
-                            <span class="text-xs font-medium uppercase tracking-wide">Owner</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div
-                                class="bg-primary/20 text-primary h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-primary/30">
-                                {{ document.author.username|slice:":2"|upper }}</div>
-                            <span class="text-sm font-medium text-dark-text">{{ document.author.username }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="p-6 grid grid-cols-2 gap-3 border-b border-dark-border">
-                <button
-                    class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
-                    <span class="material-symbols-outlined text-[18px]">download</span>
-                    Download
-                </button>
-                <button
-                    class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
-                    <span class="material-symbols-outlined text-[18px]">share</span>
-                    Share
-                </button>
-                <a href="{% url 'chat' document.id %}"
-                    class="col-span-2 flex items-center justify-center gap-2 rounded-xl h-12 px-4 bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm font-bold mt-2">
-                    <span class="material-symbols-outlined text-[20px]">chat</span>
-                    Chat with Document
-                </a>
-            </div>
-            <div class="flex flex-col flex-1 p-6 min-h-0 bg-dark-bg/30">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-white text-lg font-bold">AI summary</h3>
-                    <div class="flex gap-2">
-                        <button
-                            class="p-1.5 text-dark-text-muted hover:text-primary rounded-md hover:bg-dark-bg transition-colors"
-                            title="Copy to Clipboard">
-                            <span class="material-symbols-outlined text-[20px]">content_copy</span>
-                        </button>
-                        <button
-                            class="p-1.5 text-dark-text-muted hover:text-primary rounded-md hover:bg-dark-bg transition-colors"
-                            title="Edit Mode">
-                            <span class="material-symbols-outlined text-[20px]">edit</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="flex-1 relative group">
-                    <textarea
-                        class="w-full h-full resize-none rounded-xl border border-dark-border bg-dark-bg/60 p-4 text-sm leading-relaxed text-dark-text focus:border-primary focus:ring-1 focus:ring-primary focus:bg-dark-bg transition-all font-mono selection:bg-primary/30 caret-primary"
-                        spellcheck="false">{{ document.summary|default:"No extracted text available." }}</textarea>
-                </div>
-            </div>
-        </aside>
-    </main>
-
-    <script>
-        // Load CSV or Text content dynamically
-        const fileType = "{{ document.filetype }}";
-        const documentId = {{ document.id }};
-
-        if (fileType === "CSV") {
-            loadCSVContent();
-        } else if (fileType === "TXT" || fileType === "MD" || fileType === "LOG") {
-            loadTextContent();
+    );
+    tailwind.config.theme.extend.boxShadow = Object.assign(
+        {},
+        tailwind.config.theme.extend.boxShadow || {},
+        {
+            "inner-soft": "inset 0 2px 10px 0 rgb(0 0 0 / 0.25)"
         }
+    );
+</script>
+{% endblock %}
 
-        async function loadCSVContent() {
-            try {
-                const response = await fetch(`/documents/${documentId}/content/`);
-                const data = await response.json();
+{% block content %}
+<main class="flex flex-1 overflow-hidden">
+    <section
+        class="flex flex-col w-[70%] bg-[#0B1120] border-r border-dark-border h-[calc(100vh-64px)] overflow-hidden shadow-inner-soft">
+        <div class="flex-1 overflow-hidden bg-[#0f172a] flex justify-center shadow-inner-soft relative">
+            <!-- PDF Viewer -->
+            {% if document.filetype == "PDF" %}
+            <iframe src="{{ document.file.url }}" class="w-full h-full border-none"></iframe>
 
-                if (data.error) {
-                    showError('csv-viewer', data.error);
-                    return;
-                }
+            <!-- CSV Viewer -->
+            {% elif document.filetype == "CSV" %}
+            <div id="csv-viewer" class="w-full h-full overflow-auto p-6">
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center">
+                        <span
+                            class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">table_chart</span>
+                        <p class="text-dark-text-muted mt-4">Loading CSV data...</p>
+                    </div>
+                </div>
+            </div>
 
-                const viewer = document.getElementById('csv-viewer');
-                if (!data.rows || data.rows.length === 0) {
-                    viewer.innerHTML = `
+            <!-- Text Viewer -->
+            {% elif document.filetype == "TXT" or document.filetype == "MD" or document.filetype == "LOG" %}
+            <div id="text-viewer" class="w-full h-full overflow-auto p-6">
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center">
+                        <span
+                            class="material-symbols-outlined text-cyan-accent text-6xl animate-pulse">description</span>
+                        <p class="text-dark-text-muted mt-4">Loading text content...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Viewer -->
+            {% elif document.filetype == "PNG" or document.filetype == "JPG" or document.filetype == "JPEG" or
+            document.filetype == "GIF" or document.filetype == "WEBP" %}
+            <div class="w-full h-full overflow-auto flex items-center justify-center p-6 bg-[#0B1120]">
+                <img src="{{ document.file.url }}" alt="{{ document.name }}"
+                    class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+            </div>
+
+            <!-- Unsupported Files (DOCX, XLSX, PPTX, etc.) -->
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center p-8">
+                <div class="max-w-md text-center space-y-6">
+                    <div class="bg-dark-surface rounded-2xl p-8 border border-dark-border">
+                        <span class="material-symbols-outlined text-cyan-accent text-7xl mb-4">visibility_off</span>
+                        <h3 class="text-white text-xl font-bold mb-2">Preview Not Available</h3>
+                        <p class="text-dark-text-muted mb-6">{{ document.filetype }} files cannot be previewed in
+                            the browser.</p>
+                        <div class="space-y-3">
+                            <a href="{{ document.file.url }}" download="{{ document.name }}"
+                                class="flex items-center justify-center gap-2 rounded-xl h-12 px-6 bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm font-bold w-full">
+                                <span class="material-symbols-outlined text-[20px]">download</span>
+                                Download to View
+                            </a>
+                            <p class="text-xs text-dark-text-muted">You can still chat with this document using AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    <aside
+        class="flex flex-col w-[30%] bg-dark-surface h-[calc(100vh-64px)] overflow-y-auto border-l border-dark-border">
+        <div class="p-6 border-b border-dark-border">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-white text-lg font-bold">Details</h3>
+            </div>
+            <div class="space-y-4">
+                <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
+                    <div class="flex items-center gap-2 text-cyan-accent/70">
+                        <span class="material-symbols-outlined text-[16px]">description</span>
+                        <span class="text-xs font-medium uppercase tracking-wide">File Name</span>
+                    </div>
+                    <span class="text-sm font-medium text-dark-text truncate">{{ document.name }}</span>
+                </div>
+                <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
+                    <div class="flex items-center gap-2 text-cyan-accent/70">
+                        <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                        <span class="text-xs font-medium uppercase tracking-wide">Uploaded</span>
+                    </div>
+                    <span class="text-sm font-medium text-dark-text">{{ document.created_date }}</span>
+                </div>
+                <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
+                    <div class="flex items-center gap-2 text-cyan-accent/70">
+                        <span class="material-symbols-outlined text-[16px]">hard_drive</span>
+                        <span class="text-xs font-medium uppercase tracking-wide">Size</span>
+                    </div>
+                    <span class="text-sm font-medium text-dark-text">{{ document.size }} MB</span>
+                </div>
+                <div class="grid grid-cols-[30%_1fr] gap-2 items-center">
+                    <div class="flex items-center gap-2 text-cyan-accent/70">
+                        <span class="material-symbols-outlined text-[16px]">person</span>
+                        <span class="text-xs font-medium uppercase tracking-wide">Owner</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="bg-primary/20 text-primary h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-primary/30">
+                            {{ document.author.username|slice:":2"|upper }}</div>
+                        <span class="text-sm font-medium text-dark-text">{{ document.author.username }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 grid grid-cols-2 gap-3 border-b border-dark-border">
+            <button
+                class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
+                <span class="material-symbols-outlined text-[18px]">download</span>
+                Download
+            </button>
+            <button
+                class="col-span-1 flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-dark-bg border border-dark-border hover:border-primary/50 text-dark-text hover:text-primary transition-all text-sm font-semibold">
+                <span class="material-symbols-outlined text-[18px]">share</span>
+                Share
+            </button>
+            <a href="{% url 'chat' document.id %}"
+                class="col-span-2 flex items-center justify-center gap-2 rounded-xl h-12 px-4 bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all text-sm font-bold mt-2">
+                <span class="material-symbols-outlined text-[20px]">chat</span>
+                Chat with Document
+            </a>
+        </div>
+        <div class="flex flex-col flex-1 p-6 min-h-0 bg-dark-bg/30">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-white text-lg font-bold">AI summary</h3>
+                <div class="flex gap-2">
+                    <button
+                        class="p-1.5 text-dark-text-muted hover:text-primary rounded-md hover:bg-dark-bg transition-colors"
+                        title="Copy to Clipboard">
+                        <span class="material-symbols-outlined text-[20px]">content_copy</span>
+                    </button>
+                    <button
+                        class="p-1.5 text-dark-text-muted hover:text-primary rounded-md hover:bg-dark-bg transition-colors"
+                        title="Edit Mode">
+                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 relative group">
+                <textarea
+                    class="w-full h-full resize-none rounded-xl border border-dark-border bg-dark-bg/60 p-4 text-sm leading-relaxed text-dark-text focus:border-primary focus:ring-1 focus:ring-primary focus:bg-dark-bg transition-all font-mono selection:bg-primary/30 caret-primary"
+                    spellcheck="false">{{ document.summary|default:"No extracted text available." }}</textarea>
+            </div>
+        </div>
+    </aside>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Load CSV or Text content dynamically
+    const fileType = "{{ document.filetype }}";
+    const documentId = {{ document.id }};
+
+    if (fileType === "CSV") {
+        loadCSVContent();
+    } else if (fileType === "TXT" || fileType === "MD" || fileType === "LOG") {
+        loadTextContent();
+    }
+
+    async function loadCSVContent() {
+        try {
+            const response = await fetch(`/documents/${documentId}/content/`);
+            const data = await response.json();
+
+            if (data.error) {
+                showError('csv-viewer', data.error);
+                return;
+            }
+
+            const viewer = document.getElementById('csv-viewer');
+            if (!data.rows || data.rows.length === 0) {
+                viewer.innerHTML = `
                         <div class="flex items-center justify-center h-full">
                             <div class="text-center">
                                 <span class="material-symbols-outlined text-dark-text-muted text-6xl">table_chart</span>
@@ -259,100 +211,86 @@
                             </div>
                         </div>
                     `;
-                    return;
-                }
+                return;
+            }
 
-                // Create table
-                let html = `
-                    <div class="bg-dark-surface rounded-xl border border-dark-border overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead class="bg-dark-bg border-b border-dark-border sticky top-0">
-                                    <tr>
-                `;
+            const table = document.createElement('table');
+            table.className = 'min-w-full text-left text-sm text-dark-text';
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            data.headers.forEach((header) => {
+                const th = document.createElement('th');
+                th.className = 'px-4 py-2 bg-dark-surface border-b border-dark-border';
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
 
-                data.headers.forEach(header => {
-                    html += `<th class="px-4 py-3 text-left text-xs font-semibold text-cyan-accent uppercase tracking-wider">${escapeHtml(header)}</th>`;
+            const tbody = document.createElement('tbody');
+            data.rows.forEach((row) => {
+                const tr = document.createElement('tr');
+                row.forEach((cell) => {
+                    const td = document.createElement('td');
+                    td.className = 'px-4 py-2 border-b border-dark-border text-dark-text-muted';
+                    td.textContent = cell;
+                    tr.appendChild(td);
                 });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
 
-                html += `
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-dark-border">
-                `;
+            viewer.innerHTML = '';
+            viewer.appendChild(table);
+        } catch (error) {
+            showError('csv-viewer', 'Failed to load CSV content');
+        }
+    }
 
-                data.rows.forEach((row, idx) => {
-                    html += `<tr class="hover:bg-dark-bg/50 transition-colors">`;
-                    data.headers.forEach(header => {
-                        const value = row[header] || '';
-                        html += `<td class="px-4 py-3 text-dark-text">${escapeHtml(value)}</td>`;
-                    });
-                    html += `</tr>`;
-                });
+    async function loadTextContent() {
+        try {
+            const response = await fetch(`/documents/${documentId}/content/`);
+            const data = await response.json();
 
-                html += `
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="px-4 py-3 bg-dark-bg border-t border-dark-border text-xs text-dark-text-muted">
-                            Showing ${data.rows.length} rows
-                        </div>
-                    </div>
-                `;
-
-                viewer.innerHTML = html;
-            } catch (error) {
-                console.error('Error loading CSV:', error);
-                showError('csv-viewer', 'Failed to load CSV content');
+            if (data.error) {
+                showError('text-viewer', data.error);
+                return;
             }
-        }
 
-        async function loadTextContent() {
-            try {
-                const response = await fetch(`/documents/${documentId}/content/`);
-                const data = await response.json();
-
-                if (data.error) {
-                    showError('text-viewer', data.error);
-                    return;
-                }
-
-                const viewer = document.getElementById('text-viewer');
-                viewer.innerHTML = `
-                    <div class="max-w-4xl mx-auto">
-                        <div class="bg-dark-surface rounded-xl border border-dark-border p-6">
-                            <pre class="text-dark-text font-mono text-sm leading-relaxed whitespace-pre-wrap break-words">${escapeHtml(data.content)}</pre>
-                        </div>
-                    </div>
-                `;
-            } catch (error) {
-                console.error('Error loading text:', error);
-                showError('text-viewer', 'Failed to load text content');
+            const viewer = document.getElementById('text-viewer');
+            if (!data.content) {
+                viewer.innerHTML = '<p class="text-dark-text-muted">No content available</p>';
+                return;
             }
-        }
 
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.innerHTML = `
-                    <div class="flex items-center justify-center h-full">
-                        <div class="text-center bg-dark-surface rounded-xl p-8 border border-dark-border max-w-md">
-                            <span class="material-symbols-outlined text-red-400 text-6xl">error</span>
-                            <p class="text-dark-text mt-4 font-semibold">Error Loading File</p>
-                            <p class="text-dark-text-muted text-sm mt-2">${escapeHtml(message)}</p>
-                        </div>
+            viewer.innerHTML = `<pre class="whitespace-pre-wrap text-sm text-dark-text">${escapeHtml(data.content)}</pre>`;
+        } catch (error) {
+            showError('text-viewer', 'Failed to load text content');
+        }
+    }
+
+    function showError(id, message) {
+        const container = document.getElementById(id);
+        if (!container) {
+            return;
+        }
+        container.innerHTML = `
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-red-400 text-6xl">error</span>
+                        <p class="text-dark-text-muted mt-4">${message}</p>
                     </div>
-                `;
-            }
-        }
+                </div>
+            `;
+    }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-    </script>
-
-</body>
-
-</html>
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+</script>
+{% endblock %}
